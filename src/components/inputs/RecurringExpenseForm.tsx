@@ -1,0 +1,85 @@
+import { useBudgetStore } from '@/store/budgetStore';
+import { Plus, Trash2 } from 'lucide-react';
+import { EditableLabel } from './EditableLabel';
+import { DebouncedNumberInput } from './DebouncedNumberInput';
+
+export function RecurringExpenseForm() {
+  const {
+    recurringExpenses,
+    addRecurringExpense,
+    updateRecurringExpense,
+    removeRecurringExpense,
+  } = useBudgetStore();
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-semibold">Monthly Expenses</h3>
+        <button
+          onClick={addRecurringExpense}
+          className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 transition-opacity"
+        >
+          <Plus className="w-3 h-3" />
+          Add
+        </button>
+      </div>
+
+      {recurringExpenses.length === 0 && (
+        <p className="text-sm text-muted-foreground italic">
+          No recurring expenses added yet.
+        </p>
+      )}
+
+      {recurringExpenses.map((expense) => (
+        <div
+          key={expense.id}
+          className="rounded-lg border border-input p-4 space-y-3"
+        >
+          <div className="flex items-center gap-2">
+            <EditableLabel
+              value={expense.label}
+              onChange={(val) => updateRecurringExpense(expense.id, { label: val })}
+              placeholder="Expense name"
+              className="flex-1"
+            />
+            <button
+              onClick={() => removeRecurringExpense(expense.id)}
+              className="text-muted-foreground hover:text-destructive transition-colors p-1"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs text-muted-foreground mb-1">
+                Amount ($)
+              </label>
+              <DebouncedNumberInput
+                value={expense.amount}
+                onChange={(val) =>
+                  updateRecurringExpense(expense.id, { amount: val })
+                }
+                min={0}
+                step="10"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-muted-foreground mb-1">
+                Day of month (1-28)
+              </label>
+              <DebouncedNumberInput
+                value={expense.dayOfMonth}
+                onChange={(val) =>
+                  updateRecurringExpense(expense.id, { dayOfMonth: val })
+                }
+                min={1}
+                max={28}
+              />
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
