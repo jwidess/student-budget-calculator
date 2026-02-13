@@ -171,14 +171,17 @@ export function CashBalanceChart() {
 
   const pct = `${(zeroFraction * 100).toFixed(4)}%`;
 
-  // Track data length changes to trigger a fade transition when projection months changes
+  // Track raw data length changes to trigger a fade transition when projection months changes.
+  // We use data.length (total projection days) instead of sampled.length, because the
+  // sampling step can produce slightly different counts when event days shift that
+  // would falsely trigger a full re-mount and kill the smooth Recharts animation.
   const [chartKey, setChartKey] = useState(0);
   const [fading, setFading] = useState(false);
-  const prevLengthRef = useRef(sampled.length);
+  const prevLengthRef = useRef(data.length);
 
   useEffect(() => {
-    if (sampled.length !== prevLengthRef.current) {
-      prevLengthRef.current = sampled.length;
+    if (data.length !== prevLengthRef.current) {
+      prevLengthRef.current = data.length;
       setFading(true);
       // Brief fade-out, then swap key to re-mount chart with animation
       const timer = setTimeout(() => {
@@ -187,7 +190,7 @@ export function CashBalanceChart() {
       }, 150);
       return () => clearTimeout(timer);
     }
-  }, [sampled.length]);
+  }, [data.length]);
 
   return (
     <div className="w-full">
@@ -225,7 +228,7 @@ export function CashBalanceChart() {
                 day: 'numeric',
               });
             }}
-            interval={Math.floor(sampled.length / 8)}
+            interval={Math.floor(data.length / 8)}
             fontSize={12}
           />
           <YAxis
