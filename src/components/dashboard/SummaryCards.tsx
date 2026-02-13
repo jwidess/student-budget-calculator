@@ -66,7 +66,7 @@ export function WarningBanner() {
   const deficit = lowestPoint ? Math.abs(lowestPoint.balance) : 0;
 
   return (
-    <div className="flex items-center gap-2 rounded-md bg-red-100 dark:bg-red-950/50 border border-red-300 dark:border-red-800 px-3 py-1.5 text-xs text-red-700 dark:text-red-300 animate-in fade-in duration-300">
+    <div className="flex items-center gap-2 rounded-md bg-red-100 border border-red-300 px-3 py-1.5 text-xs text-red-700 animate-warning-fade-in">
       <AlertTriangle className="w-3.5 h-3.5 text-red-500 flex-shrink-0" />
       <span>
         <strong>Balance goes negative</strong> on{' '}

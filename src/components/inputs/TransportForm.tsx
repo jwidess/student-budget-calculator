@@ -58,7 +58,7 @@ export function TransportForm() {
           <div className="rounded-lg border border-input overflow-hidden">
             <button
               onClick={() => setAutoOpen((o) => !o)}
-              className="w-full flex items-center gap-2 px-3 py-2.5 text-sm font-medium hover:bg-accent/50 transition-colors"
+              className="w-full flex items-center gap-2 px-3 py-2.5 text-sm font-medium hover:bg-accent hover:shadow-sm transition-all cursor-pointer"
             >
               <Car className="w-4 h-4 text-blue-500" />
               <span className="flex-1 text-left">Auto Transit</span>
@@ -151,7 +151,7 @@ export function TransportForm() {
           <div className="rounded-lg border border-input overflow-hidden">
             <button
               onClick={() => setPublicOpen((o) => !o)}
-              className="w-full flex items-center gap-2 px-3 py-2.5 text-sm font-medium hover:bg-accent/50 transition-colors"
+              className="w-full flex items-center gap-2 px-3 py-2.5 text-sm font-medium hover:bg-accent hover:shadow-sm transition-all cursor-pointer"
             >
               <TrainFront className="w-4 h-4 text-purple-500" />
               <span className="flex-1 text-left">Public Transit</span>

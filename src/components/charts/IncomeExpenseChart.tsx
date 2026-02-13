@@ -58,10 +58,10 @@ interface CustomTooltipProps {
 function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload) return null;
   return (
-    <div className="rounded-lg border bg-card p-3 shadow-md">
-      <p className="text-sm font-medium mb-1">{label}</p>
+    <div className="rounded-lg border border-gray-200 p-3 shadow-lg" style={{ opacity: 1, backgroundColor: 'white' }}>
+      <p className="text-sm font-medium mb-1 text-gray-900">{label}</p>
       {payload.map((p, i) => (
-        <p key={i} className="text-sm" style={{ color: p.color }}>
+        <p key={i} className="text-sm font-semibold" style={{ color: p.color }}>
           {p.name}: {formatCurrency(p.value)}
         </p>
       ))}

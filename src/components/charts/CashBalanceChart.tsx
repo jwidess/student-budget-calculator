@@ -63,7 +63,7 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
   if (!active || !payload?.[0]) return null;
   const data = payload[0].payload;
   return (
-    <div className="rounded-lg border bg-card p-3 shadow-md">
+    <div className="rounded-lg border border-gray-200 p-3 shadow-lg" style={{ opacity: 1, backgroundColor: 'white' }}>
       <p className="text-sm font-medium">{formatDate(new Date(data.date + 'T00:00:00'))}</p>
       <p
         className={`text-lg font-bold ${

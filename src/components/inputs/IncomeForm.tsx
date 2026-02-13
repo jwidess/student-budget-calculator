@@ -48,7 +48,7 @@ export function IncomeForm() {
         <h3 className="text-sm font-semibold">Recurring Income</h3>
         <button
           onClick={addRecurringIncome}
-          className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/80 hover:shadow-sm active:scale-95 transition-all cursor-pointer"
         >
           <Plus className="w-3 h-3" />
           Add
@@ -74,7 +74,7 @@ export function IncomeForm() {
                 />
                 <button
                   onClick={() => removeRecurringIncome(income.id)}
-                  className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                  className="text-muted-foreground hover:text-destructive hover:bg-red-100 rounded-md transition-all p-1 cursor-pointer"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>

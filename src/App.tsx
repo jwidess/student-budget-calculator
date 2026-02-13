@@ -40,7 +40,7 @@ function InputSection({ id, title, icon, openSections, onToggle, children }: Inp
     <div className="border-b border-border last:border-b-0">
       <button
         onClick={() => onToggle(id)}
-        className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium hover:bg-accent/50 transition-colors"
+        className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium hover:bg-accent hover:shadow-sm transition-all cursor-pointer"
       >
         {icon}
         <span className="flex-1 text-left">{title}</span>
@@ -90,7 +90,7 @@ export default function App() {
             <WarningBanner />
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-md hover:bg-accent transition-colors lg:hidden"
+              className="p-2 rounded-md hover:bg-accent hover:shadow-sm active:scale-95 transition-all cursor-pointer lg:hidden"
               title="Toggle sidebar"
             >
               {sidebarOpen ? (
@@ -101,7 +101,7 @@ export default function App() {
             </button>
             <button
               onClick={resetAll}
-              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium hover:bg-accent transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium hover:bg-accent hover:shadow-sm active:scale-95 transition-all cursor-pointer"
               title="Reset all data to defaults"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -202,7 +202,7 @@ export default function App() {
           <div className="hidden lg:block">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-md hover:bg-accent transition-colors"
+              className="p-2 rounded-md hover:bg-accent hover:shadow-sm active:scale-95 transition-all cursor-pointer"
               title="Toggle sidebar"
             >
               {sidebarOpen ? (
