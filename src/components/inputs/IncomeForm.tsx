@@ -3,6 +3,21 @@ import { Plus, Trash2 } from 'lucide-react';
 import type { PayFrequency } from '@/engine/types';
 import { EditableLabel } from './EditableLabel';
 import { DebouncedNumberInput } from './DebouncedNumberInput';
+import { SortableItem } from './SortableItem';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 
 export function IncomeForm() {
   const {
@@ -10,7 +25,22 @@ export function IncomeForm() {
     addRecurringIncome,
     updateRecurringIncome,
     removeRecurringIncome,
+    reorderRecurringIncomes,
   } = useBudgetStore();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = recurringIncomes.findIndex((i) => i.id === active.id);
+      const newIndex = recurringIncomes.findIndex((i) => i.id === over.id);
+      reorderRecurringIncomes(oldIndex, newIndex);
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -31,86 +61,87 @@ export function IncomeForm() {
         </p>
       )}
 
-      {recurringIncomes.map((income) => (
-        <div
-          key={income.id}
-          className="rounded-lg border border-input p-4 space-y-3"
-        >
-          <div className="flex items-center gap-2">
-            <EditableLabel
-              value={income.label}
-              onChange={(val) => updateRecurringIncome(income.id, { label: val })}
-              placeholder="Income label"
-              className="flex-1"
-            />
-            <button
-              onClick={() => removeRecurringIncome(income.id)}
-              className="text-muted-foreground hover:text-destructive transition-colors p-1"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={recurringIncomes.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+          {recurringIncomes.map((income) => (
+            <SortableItem key={income.id} id={income.id}>
+              <div className="flex items-center gap-2">
+                <EditableLabel
+                  value={income.label}
+                  onChange={(val) => updateRecurringIncome(income.id, { label: val })}
+                  placeholder="Income label"
+                  className="flex-1"
+                />
+                <button
+                  onClick={() => removeRecurringIncome(income.id)}
+                  className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1">
-                Hours/week
-              </label>
-              <DebouncedNumberInput
-                value={income.hoursPerWeek}
-                onChange={(val) => updateRecurringIncome(income.id, { hoursPerWeek: val })}
-                min={0}
-                step="1"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1">
-                Hourly rate ($)
-              </label>
-              <DebouncedNumberInput
-                value={income.hourlyRate}
-                onChange={(val) => updateRecurringIncome(income.id, { hourlyRate: val })}
-                min={0}
-                step="0.50"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1">
-                Pay frequency
-              </label>
-              <select
-                value={income.frequency}
-                onChange={(e) =>
-                  updateRecurringIncome(income.id, { frequency: e.target.value as PayFrequency })
-                }
-                className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              >
-                <option value="weekly">Weekly</option>
-                <option value="biweekly">Biweekly</option>
-                <option value="monthly">Monthly</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1">
-                First paycheck date
-              </label>
-              <input
-                type="date"
-                value={income.startDate}
-                onChange={(e) =>
-                  updateRecurringIncome(income.id, { startDate: e.target.value })
-                }
-                className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
-          </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">
+                    Hours/week
+                  </label>
+                  <DebouncedNumberInput
+                    value={income.hoursPerWeek}
+                    onChange={(val) => updateRecurringIncome(income.id, { hoursPerWeek: val })}
+                    min={0}
+                    step="1"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">
+                    Hourly rate ($)
+                  </label>
+                  <DebouncedNumberInput
+                    value={income.hourlyRate}
+                    onChange={(val) => updateRecurringIncome(income.id, { hourlyRate: val })}
+                    min={0}
+                    step="0.50"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">
+                    Pay frequency
+                  </label>
+                  <select
+                    value={income.frequency}
+                    onChange={(e) =>
+                      updateRecurringIncome(income.id, { frequency: e.target.value as PayFrequency })
+                    }
+                    className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  >
+                    <option value="weekly">Weekly</option>
+                    <option value="biweekly">Biweekly</option>
+                    <option value="monthly">Monthly</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">
+                    First paycheck date
+                  </label>
+                  <input
+                    type="date"
+                    value={income.startDate}
+                    onChange={(e) =>
+                      updateRecurringIncome(income.id, { startDate: e.target.value })
+                    }
+                    className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                </div>
+              </div>
 
-          <p className="text-xs text-muted-foreground">
-            ≈ ${(income.hoursPerWeek * income.hourlyRate * (income.frequency === 'biweekly' ? 2 : income.frequency === 'monthly' ? 52 / 12 : 1)).toFixed(0)}{' '}
-            per {income.frequency === 'biweekly' ? '2 weeks' : income.frequency}
-          </p>
-        </div>
-      ))}
+              <p className="text-xs text-muted-foreground">
+                ≈ ${(income.hoursPerWeek * income.hourlyRate * (income.frequency === 'biweekly' ? 2 : income.frequency === 'monthly' ? 52 / 12 : 1)).toFixed(0)}{' '}
+                per {income.frequency === 'biweekly' ? '2 weeks' : income.frequency}
+              </p>
+            </SortableItem>
+          ))}
+        </SortableContext>
+      </DndContext>
     </div>
   );
 }

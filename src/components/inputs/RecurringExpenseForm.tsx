@@ -2,6 +2,21 @@ import { useBudgetStore } from '@/store/budgetStore';
 import { Plus, Trash2 } from 'lucide-react';
 import { EditableLabel } from './EditableLabel';
 import { DebouncedNumberInput } from './DebouncedNumberInput';
+import { SortableItem } from './SortableItem';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 
 export function RecurringExpenseForm() {
   const {
@@ -9,7 +24,22 @@ export function RecurringExpenseForm() {
     addRecurringExpense,
     updateRecurringExpense,
     removeRecurringExpense,
+    reorderRecurringExpenses,
   } = useBudgetStore();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = recurringExpenses.findIndex((e) => e.id === active.id);
+      const newIndex = recurringExpenses.findIndex((e) => e.id === over.id);
+      reorderRecurringExpenses(oldIndex, newIndex);
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -30,56 +60,57 @@ export function RecurringExpenseForm() {
         </p>
       )}
 
-      {recurringExpenses.map((expense) => (
-        <div
-          key={expense.id}
-          className="rounded-lg border border-input p-4 space-y-3"
-        >
-          <div className="flex items-center gap-2">
-            <EditableLabel
-              value={expense.label}
-              onChange={(val) => updateRecurringExpense(expense.id, { label: val })}
-              placeholder="Expense name"
-              className="flex-1"
-            />
-            <button
-              onClick={() => removeRecurringExpense(expense.id)}
-              className="text-muted-foreground hover:text-destructive transition-colors p-1"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={recurringExpenses.map((e) => e.id)} strategy={verticalListSortingStrategy}>
+          {recurringExpenses.map((expense) => (
+            <SortableItem key={expense.id} id={expense.id}>
+              <div className="flex items-center gap-2">
+                <EditableLabel
+                  value={expense.label}
+                  onChange={(val) => updateRecurringExpense(expense.id, { label: val })}
+                  placeholder="Expense name"
+                  className="flex-1"
+                />
+                <button
+                  onClick={() => removeRecurringExpense(expense.id)}
+                  className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1">
-                Amount ($)
-              </label>
-              <DebouncedNumberInput
-                value={expense.amount}
-                onChange={(val) =>
-                  updateRecurringExpense(expense.id, { amount: val })
-                }
-                min={0}
-                step="10"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1">
-                Day of month (1-28)
-              </label>
-              <DebouncedNumberInput
-                value={expense.dayOfMonth}
-                onChange={(val) =>
-                  updateRecurringExpense(expense.id, { dayOfMonth: val })
-                }
-                min={1}
-                max={28}
-              />
-            </div>
-          </div>
-        </div>
-      ))}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">
+                    Amount ($)
+                  </label>
+                  <DebouncedNumberInput
+                    value={expense.amount}
+                    onChange={(val) =>
+                      updateRecurringExpense(expense.id, { amount: val })
+                    }
+                    min={0}
+                    step="10"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">
+                    Day of month (1-28)
+                  </label>
+                  <DebouncedNumberInput
+                    value={expense.dayOfMonth}
+                    onChange={(val) =>
+                      updateRecurringExpense(expense.id, { dayOfMonth: val })
+                    }
+                    min={1}
+                    max={28}
+                  />
+                </div>
+              </div>
+            </SortableItem>
+          ))}
+        </SortableContext>
+      </DndContext>
     </div>
   );
 }

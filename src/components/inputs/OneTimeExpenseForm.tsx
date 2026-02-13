@@ -2,6 +2,21 @@ import { useBudgetStore } from '@/store/budgetStore';
 import { Plus, Trash2 } from 'lucide-react';
 import { EditableLabel } from './EditableLabel';
 import { DebouncedNumberInput } from './DebouncedNumberInput';
+import { SortableItem } from './SortableItem';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 
 export function OneTimeExpenseForm() {
   const {
@@ -9,7 +24,22 @@ export function OneTimeExpenseForm() {
     addOneTimeExpense,
     updateOneTimeExpense,
     removeOneTimeExpense,
+    reorderOneTimeExpenses,
   } = useBudgetStore();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = oneTimeExpenses.findIndex((e) => e.id === active.id);
+      const newIndex = oneTimeExpenses.findIndex((e) => e.id === over.id);
+      reorderOneTimeExpenses(oldIndex, newIndex);
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -30,58 +60,59 @@ export function OneTimeExpenseForm() {
         </p>
       )}
 
-      {oneTimeExpenses.map((expense) => (
-        <div
-          key={expense.id}
-          className="rounded-lg border border-input p-4 space-y-3"
-        >
-          <div className="flex items-center gap-2">
-            <EditableLabel
-              value={expense.label}
-              onChange={(val) =>
-                updateOneTimeExpense(expense.id, { label: val })
-              }
-              placeholder="Description"
-              className="flex-1"
-            />
-            <button
-              onClick={() => removeOneTimeExpense(expense.id)}
-              className="text-muted-foreground hover:text-destructive transition-colors p-1"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={oneTimeExpenses.map((e) => e.id)} strategy={verticalListSortingStrategy}>
+          {oneTimeExpenses.map((expense) => (
+            <SortableItem key={expense.id} id={expense.id}>
+              <div className="flex items-center gap-2">
+                <EditableLabel
+                  value={expense.label}
+                  onChange={(val) =>
+                    updateOneTimeExpense(expense.id, { label: val })
+                  }
+                  placeholder="Description"
+                  className="flex-1"
+                />
+                <button
+                  onClick={() => removeOneTimeExpense(expense.id)}
+                  className="text-muted-foreground hover:text-destructive transition-colors p-1"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1">
-                Amount ($)
-              </label>
-              <DebouncedNumberInput
-                value={expense.amount}
-                onChange={(val) =>
-                  updateOneTimeExpense(expense.id, { amount: val })
-                }
-                min={0}
-                step="100"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1">
-                Date
-              </label>
-              <input
-                type="date"
-                value={expense.date}
-                onChange={(e) =>
-                  updateOneTimeExpense(expense.id, { date: e.target.value })
-                }
-                className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
-          </div>
-        </div>
-      ))}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">
+                    Amount ($)
+                  </label>
+                  <DebouncedNumberInput
+                    value={expense.amount}
+                    onChange={(val) =>
+                      updateOneTimeExpense(expense.id, { amount: val })
+                    }
+                    min={0}
+                    step="100"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">
+                    Date
+                  </label>
+                  <input
+                    type="date"
+                    value={expense.date}
+                    onChange={(e) =>
+                      updateOneTimeExpense(expense.id, { date: e.target.value })
+                    }
+                    className="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                </div>
+              </div>
+            </SortableItem>
+          ))}
+        </SortableContext>
+      </DndContext>
     </div>
   );
 }

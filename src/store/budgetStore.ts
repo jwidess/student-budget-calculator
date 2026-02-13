@@ -40,6 +40,11 @@ interface BudgetActions {
   updateOneTimeExpense: (id: string, data: Partial<OneTimeExpense>) => void;
   removeOneTimeExpense: (id: string) => void;
 
+  reorderRecurringIncomes: (fromIndex: number, toIndex: number) => void;
+  reorderOneTimeIncomes: (fromIndex: number, toIndex: number) => void;
+  reorderRecurringExpenses: (fromIndex: number, toIndex: number) => void;
+  reorderOneTimeExpenses: (fromIndex: number, toIndex: number) => void;
+
   updateFoodBudget: (data: Partial<FoodBudget>) => void;
   updateTransportConfig: (data: Partial<TransportConfig>) => void;
 
@@ -196,6 +201,36 @@ export const useBudgetStore = create<BudgetStore>()(
         set((state) => ({
           oneTimeExpenses: state.oneTimeExpenses.filter((e) => e.id !== id),
         })),
+
+      // ── Reorder helpers ──
+      reorderRecurringIncomes: (from, to) =>
+        set((state) => {
+          const arr = [...state.recurringIncomes];
+          const [item] = arr.splice(from, 1) as [typeof arr[0]];
+          arr.splice(to, 0, item);
+          return { recurringIncomes: arr };
+        }),
+      reorderOneTimeIncomes: (from, to) =>
+        set((state) => {
+          const arr = [...state.oneTimeIncomes];
+          const [item] = arr.splice(from, 1) as [typeof arr[0]];
+          arr.splice(to, 0, item);
+          return { oneTimeIncomes: arr };
+        }),
+      reorderRecurringExpenses: (from, to) =>
+        set((state) => {
+          const arr = [...state.recurringExpenses];
+          const [item] = arr.splice(from, 1) as [typeof arr[0]];
+          arr.splice(to, 0, item);
+          return { recurringExpenses: arr };
+        }),
+      reorderOneTimeExpenses: (from, to) =>
+        set((state) => {
+          const arr = [...state.oneTimeExpenses];
+          const [item] = arr.splice(from, 1) as [typeof arr[0]];
+          arr.splice(to, 0, item);
+          return { oneTimeExpenses: arr };
+        }),
 
       // ── Food Budget ──
       updateFoodBudget: (data) =>

@@ -156,6 +156,16 @@ export default function App() {
           </InputSection>
 
           <InputSection
+            id="one-time-expenses"
+            title="One-Time Expenses"
+            icon={<Calendar className="w-4 h-4 text-red-500" />}
+            openSections={openSections}
+            onToggle={toggle}
+          >
+            <OneTimeExpenseForm />
+          </InputSection>
+
+          <InputSection
             id="expenses"
             title="Monthly Expenses"
             icon={<TrendingDown className="w-4 h-4 text-red-500" />}
@@ -183,16 +193,6 @@ export default function App() {
             onToggle={toggle}
           >
             <TransportForm />
-          </InputSection>
-
-          <InputSection
-            id="one-time-expenses"
-            title="One-Time Expenses"
-            icon={<Calendar className="w-4 h-4 text-red-500" />}
-            openSections={openSections}
-            onToggle={toggle}
-          >
-            <OneTimeExpenseForm />
           </InputSection>
         </aside>
 
