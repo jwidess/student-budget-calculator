@@ -183,21 +183,26 @@ export default function App() {
           onTransitionEnd={handleSidebarTransitionEnd}
         >
           <div className="w-80 h-full overflow-y-auto scrollbar-hide">
-          <div className="sticky top-0 bg-white border-b px-4 py-3 space-y-3 z-10">
-            <div className="border-b pb-3">
+          <div className="sticky top-0 bg-white border-b px-2 py-3 z-10">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-s font-semibold text-muted-foreground uppercase tracking-wider">
+                Budget Inputs
+              </p>
+
+              {/* vertical divider */}
+              <div className="hidden sm:block h-6 w-px bg-gray-500" role="separator" aria-orientation="vertical" />
+
               <div className="relative template-menu-container">
                 <button
                   onClick={() => setTemplateMenuOpen(!templateMenuOpen)}
-                  className="w-full flex items-center justify-left gap-2 rounded-md bg-primary px-1 py-1 text-xs font-medium text-primary-foreground hover:bg-primary/90 hover:shadow-sm active:scale-95 transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-md bg-primary px-2.5 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 hover:shadow-sm active:scale-95 transition-all cursor-pointer whitespace-nowrap"
                 >
-                  <div className="flex items-center gap-2">
-                    <FileText className="w-3.5 h-3.5" />
-                    <span>Load Template</span>
-                  </div>
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${templateMenuOpen ? 'rotate-180' : ''}`} />
+                  <FileText className="w-3 h-3" />
+                  <span>Load Template</span>
+                  <ChevronDown className={`w-3 h-3 transition-transform ${templateMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
                 {templateMenuOpen && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-input rounded-md shadow-xl z-[100] max-h-80 overflow-y-auto">
+                  <div className="absolute top-full right-0 mt-1 bg-white border border-input rounded-md shadow-xl z-[100] max-h-80 overflow-y-auto w-64">
                     {budgetTemplates.map((template) => (
                       <button
                         key={template.name}
@@ -217,9 +222,6 @@ export default function App() {
                 )}
               </div>
             </div>
-            <p className="text-s font-semibold text-muted-foreground uppercase tracking-wider">
-              Budget Inputs:
-            </p>
           </div>
 
           <InputSection
