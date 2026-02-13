@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from 'react';
 import {
   BarChart,
   Bar,
@@ -73,10 +74,31 @@ export function IncomeExpenseChart() {
   const { snapshots } = useProjection();
   const data = aggregateMonthly(snapshots);
 
+  // Track data length changes to trigger a fade transition when projection months changes
+  const [chartKey, setChartKey] = useState(0);
+  const [fading, setFading] = useState(false);
+  const prevLengthRef = useRef(data.length);
+
+  useEffect(() => {
+    if (data.length !== prevLengthRef.current) {
+      prevLengthRef.current = data.length;
+      setFading(true);
+      const timer = setTimeout(() => {
+        setChartKey((k) => k + 1);
+        setFading(false);
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [data.length]);
+
   return (
     <div className="w-full">
       <h2 className="text-lg font-semibold mb-4">Monthly Income vs Expenses</h2>
-      <ResponsiveContainer width="100%" height={300}>
+      <div
+        className="transition-opacity duration-150 ease-in-out"
+        style={{ opacity: fading ? 0 : 1 }}
+      >
+      <ResponsiveContainer key={chartKey} width="100%" height={300}>
         <BarChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
           <XAxis dataKey="month" fontSize={12} />
@@ -87,6 +109,7 @@ export function IncomeExpenseChart() {
           <Bar dataKey="expenses" name="Expenses" fill="#ef4444" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import {
   AreaChart,
   Area,
@@ -171,10 +171,32 @@ export function CashBalanceChart() {
 
   const pct = `${(zeroFraction * 100).toFixed(4)}%`;
 
+  // Track data length changes to trigger a fade transition when projection months changes
+  const [chartKey, setChartKey] = useState(0);
+  const [fading, setFading] = useState(false);
+  const prevLengthRef = useRef(sampled.length);
+
+  useEffect(() => {
+    if (sampled.length !== prevLengthRef.current) {
+      prevLengthRef.current = sampled.length;
+      setFading(true);
+      // Brief fade-out, then swap key to re-mount chart with animation
+      const timer = setTimeout(() => {
+        setChartKey((k) => k + 1);
+        setFading(false);
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [sampled.length]);
+
   return (
     <div className="w-full">
       <h2 className="text-lg font-semibold mb-4">Cash Balance Over Time</h2>
-      <ResponsiveContainer width="100%" height={400}>
+      <div
+        className="transition-opacity duration-150 ease-in-out"
+        style={{ opacity: fading ? 0 : 1 }}
+      >
+      <ResponsiveContainer key={chartKey} width="100%" height={400}>
         <AreaChart
           data={sampled}
           margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
@@ -242,6 +264,7 @@ export function CashBalanceChart() {
           />
         </AreaChart>
       </ResponsiveContainer>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo, useRef, useCallback } from 'react';
 import { CashBalanceChart } from '@/components/charts/CashBalanceChart';
 import { IncomeExpenseChart } from '@/components/charts/IncomeExpenseChart';
 import { SummaryCards, WarningBanner } from '@/components/dashboard/SummaryCards';
@@ -53,10 +53,46 @@ function InputSection({ id, title, icon, openSections, onToggle, children }: Inp
   );
 }
 
+const MemoizedCharts = memo(function MemoizedCharts() {
+  return (
+    <>
+      <div className="rounded-xl border bg-card p-6 shadow-sm">
+        <CashBalanceChart />
+      </div>
+
+      <div className="rounded-xl border bg-card p-6 shadow-sm">
+        <IncomeExpenseChart />
+      </div>
+    </>
+  );
+});
+
 export default function App() {
   const [openSections, setOpenSections] = useState<Set<Section>>(new Set(['general']));
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const resetAll = useBudgetStore((s) => s.resetAll);
+  const mainRef = useRef<HTMLElement>(null);
+
+  // Freeze the main content width during sidebar animation so
+  // ResponsiveContainer doesn't re-render charts on every frame.
+  const toggleSidebar = useCallback(() => {
+    const main = mainRef.current;
+    if (main) {
+      main.style.width = `${main.getBoundingClientRect().width}px`;
+      main.style.flex = 'none';
+    }
+    setSidebarOpen((prev) => !prev);
+  }, []);
+
+  const handleSidebarTransitionEnd = useCallback((e: React.TransitionEvent) => {
+    // Only respond to the sidebar's own width transition, not children
+    if (e.propertyName !== 'width') return;
+    const main = mainRef.current;
+    if (main) {
+      main.style.width = '';
+      main.style.flex = '';
+    }
+  }, []);
 
   const toggle = (id: Section) => {
     setOpenSections((prev) => {
@@ -89,7 +125,7 @@ export default function App() {
           <div className="flex items-center gap-2 flex-wrap justify-end">
             <WarningBanner />
             <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+              onClick={toggleSidebar}
               className="p-2 rounded-md hover:bg-accent hover:shadow-sm active:scale-95 transition-all cursor-pointer lg:hidden"
               title="Toggle sidebar"
             >
@@ -119,10 +155,12 @@ export default function App() {
       <div className="flex-1 flex max-w-screen-2xl mx-auto w-full">
         {/* Sidebar - Inputs */}
         <aside
-          className={`border-r bg-card overflow-y-auto transition-all duration-200 ${
-            sidebarOpen ? 'w-80 min-w-[320px]' : 'w-0 min-w-0 overflow-hidden'
+          className={`border-r bg-card overflow-hidden transition-[width,min-width] duration-200 will-change-[width] ${
+            sidebarOpen ? 'w-80 min-w-[320px]' : 'w-0 min-w-0'
           }`}
+          onTransitionEnd={handleSidebarTransitionEnd}
         >
+          <div className="w-80 h-full overflow-y-auto scrollbar-hide">
           <div className="sticky top-0 bg-card/95 backdrop-blur-sm border-b px-4 py-2">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Budget Inputs
@@ -198,14 +236,15 @@ export default function App() {
           >
             <TransportForm />
           </InputSection>
+          </div>
         </aside>
 
         {/* Dashboard */}
-        <main className="flex-1 overflow-y-auto p-6 space-y-6">
+        <main ref={mainRef} className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* Toggle sidebar on desktop */}
           <div className="hidden lg:block">
             <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+              onClick={toggleSidebar}
               className="p-2 rounded-md hover:bg-accent hover:shadow-sm active:scale-95 transition-all cursor-pointer"
               title="Toggle sidebar"
             >
@@ -219,13 +258,7 @@ export default function App() {
 
           <SummaryCards />
 
-          <div className="rounded-xl border bg-card p-6 shadow-sm">
-            <CashBalanceChart />
-          </div>
-
-          <div className="rounded-xl border bg-card p-6 shadow-sm">
-            <IncomeExpenseChart />
-          </div>
+          <MemoizedCharts />
         </main>
       </div>
     </div>
