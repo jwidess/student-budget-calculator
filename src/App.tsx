@@ -9,6 +9,7 @@ import { RecurringExpenseForm } from '@/components/inputs/RecurringExpenseForm';
 import { OneTimeExpenseForm } from '@/components/inputs/OneTimeExpenseForm';
 import { FoodBudgetForm } from '@/components/inputs/FoodBudgetForm';
 import { TransportForm } from '@/components/inputs/TransportForm';
+import { RotateDevicePrompt } from '@/components/RotateDevicePrompt';
 import { useBudgetStore } from '@/store/budgetStore';
 import { budgetTemplates } from '@/store/templates';
 import {
@@ -128,7 +129,9 @@ export default function App() {
   }, [templateMenuOpen]);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <>
+      <RotateDevicePrompt />
+      <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="border-b bg-card shadow-sm">
         <div className="max-w-screen-2xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
@@ -319,5 +322,6 @@ export default function App() {
         </main>
       </div>
     </div>
+    </>
   );
 }

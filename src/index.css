@@ -86,3 +86,62 @@ body {
   color: var(--foreground);
   font-family: system-ui, -apple-system, sans-serif;
 }
+
+/* Rotate device prompt - only shown on portrait mobile */
+.rotate-prompt {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--background);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+.rotate-prompt-content {
+  text-align: center;
+  padding: 2rem;
+  max-width: 280px;
+}
+
+.rotate-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  animation: rotate-pulse 2s ease-in-out infinite;
+}
+
+.rotate-prompt-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--foreground);
+}
+
+.rotate-prompt-text {
+  font-size: 1rem;
+  color: var(--muted-foreground);
+}
+
+@keyframes rotate-pulse {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-15deg);
+  }
+  75% {
+    transform: rotate(15deg);
+  }
+}
+
+/* Show rotate prompt only on mobile portrait */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+  .rotate-prompt {
+    display: flex;
+  }
+}
