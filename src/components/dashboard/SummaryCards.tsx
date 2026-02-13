@@ -84,7 +84,8 @@ export function WarningBanner() {
   );
 }
 
-export function OutOfRangeBanner() {
+// Helper hook to detect out-of-range items
+export function useOutOfRangeDetection() {
   const { oneTimeExpenses, oneTimeIncomes, recurringIncomes, projectionMonths } = useBudgetStore();
 
   const minDate = format(new Date(), 'yyyy-MM-dd');
@@ -100,7 +101,16 @@ export function OutOfRangeBanner() {
     (i) => i.startDate < minDate || i.startDate > maxDate
   );
 
-  const totalOutOfRange = outOfRangeExpenses.length + outOfRangeIncomes.length + outOfRangeRecurring.length;
+  return {
+    hasOutOfRangeExpenses: outOfRangeExpenses.length > 0,
+    hasOutOfRangeIncomes: outOfRangeIncomes.length > 0,
+    hasOutOfRangeRecurring: outOfRangeRecurring.length > 0,
+    totalOutOfRange: outOfRangeExpenses.length + outOfRangeIncomes.length + outOfRangeRecurring.length,
+  };
+}
+
+export function OutOfRangeBanner() {
+  const { totalOutOfRange } = useOutOfRangeDetection();
 
   if (totalOutOfRange === 0) return null;
 

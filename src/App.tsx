@@ -1,7 +1,7 @@
 import { useState, memo, useRef, useCallback, useEffect } from 'react';
 import { CashBalanceChart } from '@/components/charts/CashBalanceChart';
 import { IncomeExpenseChart } from '@/components/charts/IncomeExpenseChart';
-import { SummaryCards, WarningBanner, OutOfRangeBanner } from '@/components/dashboard/SummaryCards';
+import { SummaryCards, WarningBanner, OutOfRangeBanner, useOutOfRangeDetection } from '@/components/dashboard/SummaryCards';
 import { InitialBalanceForm } from '@/components/inputs/InitialBalanceForm';
 import { IncomeForm } from '@/components/inputs/IncomeForm';
 import { OneTimeIncomeForm } from '@/components/inputs/OneTimeIncomeForm';
@@ -35,15 +35,18 @@ interface InputSectionProps {
   openSections: Set<Section>;
   onToggle: (id: Section) => void;
   children: React.ReactNode;
+  hasWarning?: boolean;
 }
 
-function InputSection({ id, title, icon, openSections, onToggle, children }: InputSectionProps) {
+function InputSection({ id, title, icon, openSections, onToggle, children, hasWarning }: InputSectionProps) {
   const isOpen = openSections.has(id);
   return (
     <div className="border-b border-border last:border-b-0">
       <button
         onClick={() => onToggle(id)}
-        className="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium hover:bg-accent hover:shadow-sm transition-all cursor-pointer"
+        className={`w-full flex items-center gap-2 px-4 py-3 text-sm font-medium hover:bg-accent hover:shadow-sm transition-all cursor-pointer ${
+          hasWarning ? 'bg-orange-100 border-l-4 border-l-orange-500' : ''
+        }`}
       >
         {icon}
         <span className="flex-1 text-left">{title}</span>
@@ -81,6 +84,9 @@ export default function App() {
   const resetAll = useBudgetStore((s) => s.resetAll);
   const applyTemplate = useBudgetStore((s) => s.applyTemplate);
   const mainRef = useRef<HTMLElement>(null);
+
+  // Use centralized out-of-range detection
+  const { hasOutOfRangeRecurring, hasOutOfRangeIncomes, hasOutOfRangeExpenses } = useOutOfRangeDetection();
 
   // Freeze the main content width during sidebar animation so
   // ResponsiveContainer doesn't re-render charts on every frame.
@@ -243,6 +249,7 @@ export default function App() {
             icon={<TrendingUp className="w-4 h-4 text-green-500" />}
             openSections={openSections}
             onToggle={toggle}
+            hasWarning={hasOutOfRangeRecurring}
           >
             <IncomeForm />
           </InputSection>
@@ -253,6 +260,7 @@ export default function App() {
             icon={<Calendar className="w-4 h-4 text-green-500" />}
             openSections={openSections}
             onToggle={toggle}
+            hasWarning={hasOutOfRangeIncomes}
           >
             <OneTimeIncomeForm />
           </InputSection>
@@ -263,6 +271,7 @@ export default function App() {
             icon={<Calendar className="w-4 h-4 text-red-500" />}
             openSections={openSections}
             onToggle={toggle}
+            hasWarning={hasOutOfRangeExpenses}
           >
             <OneTimeExpenseForm />
           </InputSection>
