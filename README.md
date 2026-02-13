@@ -7,6 +7,8 @@ A visual budget planning tool designed for students to track income, expenses, a
 
 ![Example Image](example.png)
 
+## View the Live App Here: [jwidess.github.io/student-budget-calculator/](https://jwidess.github.io/student-budget-calculator/)
+
 ## Features
 
 ### 💰 Income Tracking
@@ -30,6 +32,18 @@ A visual budget planning tool designed for students to track income, expenses, a
 - All data automatically saved to browser localStorage
 - No account needed, no server required, run entirely in your browser
 - Reset to defaults with one click
+
+## Usage Tips
+### DO NOT RELY ON FOR ACTUAL BUDGETING DECISIONS WITHOUT DOUBLE-CHECKING PROJECTIONS. THIS IS A WIP AND WILL CONTAIN BUGS.
+
+1. **Use the Templates**: Start with one of the templates to see how everything works (Button in top-right corner)
+2. **Start Simple**: Begin with just your initial balance and one income source
+3. **Add Expenses Gradually**: Start with big recurring costs (rent, utilities), then fill in details
+4. **Use Drag Handles**: Reorder items by grabbing the grip icon (⋮⋮) on the left of each card
+5. **Multiple Sections Open**: Click any section header to expand/collapse
+6. **Projection Length**: Adjust how many months ahead to calculate (3-24 months)
+7. **Watch the Warning Banner**: The header shows an alert if your balance will go negative or if dates are invalid
+8. **Reset Anytime**: Use the reset button in the top-right to restore default values
 
 ## How It Works
 
@@ -60,7 +74,7 @@ The entire state is managed by **Zustand** with localStorage persistence, so you
 - **date-fns** - Date utility library
 - **Lucide React** - Icon set
 
-## Setup Instructions
+## Local Setup Instructions
 
 ### Prerequisites
 
@@ -161,18 +175,12 @@ index.html               # Vite HTML entry
 
 </details>
 
-## Usage Tips
-### DO NOT RELY ON FOR ACTUAL BUDGETING DECISIONS WITHOUT DOUBLE-CHECKING PROJECTIONS. THIS IS A WIP AND WILL CONTAIN BUGS.
-
-1. **Use the Templates**: Start with one of the templates to see how everything works (Button in top-right corner)
-2. **Start Simple**: Begin with just your initial balance and one income source
-3. **Add Expenses Gradually**: Start with big recurring costs (rent, utilities), then fill in details
-4. **Use Drag Handles**: Reorder items by grabbing the grip icon (⋮⋮) on the left of each card
-5. **Multiple Sections Open**: Click any section header to expand/collapse
-6. **Projection Length**: Adjust how many months ahead to calculate (3-24 months)
-7. **Watch the Warning Banner**: The header shows an alert if your balance will go negative or if dates are invalid
-8. **Reset Anytime**: Use the reset button in the top-right to restore default values
-
+## To-do
+- [ ] Add mobile support/variable width handling for smaller screens. Currently does not work on narrow viewports.
+- [ ] Add end date for jobs (Recurring Income) for things like short term gigs or summer jobs.
+- [ ] Add help tooltips explaining each input field and how it affects projections.
+- [ ] Add help modal for new users with a quick walkthrough of features.
+- [ ] Add export projection data as CSV
 
 ## License
 
