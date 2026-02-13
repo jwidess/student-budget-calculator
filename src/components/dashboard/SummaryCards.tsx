@@ -1,5 +1,7 @@
 import { useProjection } from '@/hooks/useProjection';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { useBudgetStore } from '@/store/budgetStore';
+import { format, addMonths } from 'date-fns';
 import { AlertTriangle, TrendingDown, TrendingUp, DollarSign } from 'lucide-react';
 
 export function SummaryCards() {
@@ -77,6 +79,38 @@ export function WarningBanner() {
             <strong>{formatCurrency(-deficit)}</strong>
           </>
         )}
+      </span>
+    </div>
+  );
+}
+
+export function OutOfRangeBanner() {
+  const { oneTimeExpenses, oneTimeIncomes, recurringIncomes, projectionMonths } = useBudgetStore();
+
+  const minDate = format(new Date(), 'yyyy-MM-dd');
+  const maxDate = format(addMonths(new Date(), projectionMonths), 'yyyy-MM-dd');
+
+  const outOfRangeExpenses = oneTimeExpenses.filter(
+    (e) => e.date < minDate || e.date > maxDate
+  );
+  const outOfRangeIncomes = oneTimeIncomes.filter(
+    (i) => i.date < minDate || i.date > maxDate
+  );
+  const outOfRangeRecurring = recurringIncomes.filter(
+    (i) => i.startDate < minDate || i.startDate > maxDate
+  );
+
+  const totalOutOfRange = outOfRangeExpenses.length + outOfRangeIncomes.length + outOfRangeRecurring.length;
+
+  if (totalOutOfRange === 0) return null;
+
+  const itemWord = totalOutOfRange === 1 ? 'item has a date' : 'items have dates';
+
+  return (
+    <div className="flex items-center gap-2 rounded-md bg-orange-100 border border-orange-300 px-3 py-1.5 text-xs text-orange-700 animate-warning-fade-in">
+      <AlertTriangle className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
+      <span>
+        <strong>{totalOutOfRange} {itemWord}</strong> outside the current projection range!
       </span>
     </div>
   );

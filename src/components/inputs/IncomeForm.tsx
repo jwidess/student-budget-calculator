@@ -33,6 +33,10 @@ export function IncomeForm() {
   const minDate = format(new Date(), 'yyyy-MM-dd');
   const maxDate = format(addMonths(new Date(), projectionMonths), 'yyyy-MM-dd');
 
+  const isDateOutOfRange = (dateStr: string) => {
+    return dateStr < minDate || dateStr > maxDate;
+  };
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -68,8 +72,10 @@ export function IncomeForm() {
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={recurringIncomes.map((i) => i.id)} strategy={verticalListSortingStrategy}>
-          {recurringIncomes.map((income) => (
-            <SortableItem key={income.id} id={income.id}>
+          {recurringIncomes.map((income) => {
+            const isOutOfRange = isDateOutOfRange(income.startDate);
+            return (
+            <SortableItem key={income.id} id={income.id} className={isOutOfRange ? 'border-2 border-red-500 bg-orange-100' : ''}>
               <div className="flex items-center gap-2">
                 <EditableLabel
                   value={income.label}
@@ -146,7 +152,8 @@ export function IncomeForm() {
                 per {income.frequency === 'biweekly' ? '2 weeks' : income.frequency}
               </p>
             </SortableItem>
-          ))}
+            );
+          })}
         </SortableContext>
       </DndContext>
     </div>

@@ -5,9 +5,10 @@ import { GripVertical } from 'lucide-react';
 interface SortableItemProps {
   id: string;
   children: React.ReactNode;
+  className?: string;
 }
 
-export function SortableItem({ id, children }: SortableItemProps) {
+export function SortableItem({ id, children, className = '' }: SortableItemProps) {
   const {
     attributes,
     listeners,
@@ -30,7 +31,7 @@ export function SortableItem({ id, children }: SortableItemProps) {
       style={style}
       className={`rounded-lg border border-input p-4 space-y-3 bg-card ${
         isDragging ? 'opacity-50 shadow-lg ring-2 ring-primary/30' : ''
-      }`}
+      } ${className}`.trim()}
     >
       <div className="flex items-start gap-1">
         <button

@@ -32,6 +32,10 @@ export function OneTimeExpenseForm() {
   const minDate = format(new Date(), 'yyyy-MM-dd');
   const maxDate = format(addMonths(new Date(), projectionMonths), 'yyyy-MM-dd');
 
+  const isDateOutOfRange = (dateStr: string) => {
+    return dateStr < minDate || dateStr > maxDate;
+  };
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -67,8 +71,10 @@ export function OneTimeExpenseForm() {
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={oneTimeExpenses.map((e) => e.id)} strategy={verticalListSortingStrategy}>
-          {oneTimeExpenses.map((expense) => (
-            <SortableItem key={expense.id} id={expense.id}>
+          {oneTimeExpenses.map((expense) => {
+            const isOutOfRange = isDateOutOfRange(expense.date);
+            return (
+            <SortableItem key={expense.id} id={expense.id} className={isOutOfRange ? 'border-2 border-red-500 bg-orange-100' : ''}>
               <div className="flex items-center gap-2">
                 <EditableLabel
                   value={expense.label}
@@ -117,7 +123,8 @@ export function OneTimeExpenseForm() {
                 </div>
               </div>
             </SortableItem>
-          ))}
+            );
+          })}
         </SortableContext>
       </DndContext>
     </div>

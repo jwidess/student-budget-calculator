@@ -1,7 +1,7 @@
 import { useState, memo, useRef, useCallback } from 'react';
 import { CashBalanceChart } from '@/components/charts/CashBalanceChart';
 import { IncomeExpenseChart } from '@/components/charts/IncomeExpenseChart';
-import { SummaryCards, WarningBanner } from '@/components/dashboard/SummaryCards';
+import { SummaryCards, WarningBanner, OutOfRangeBanner } from '@/components/dashboard/SummaryCards';
 import { InitialBalanceForm } from '@/components/inputs/InitialBalanceForm';
 import { IncomeForm } from '@/components/inputs/IncomeForm';
 import { OneTimeIncomeForm } from '@/components/inputs/OneTimeIncomeForm';
@@ -128,6 +128,7 @@ export default function App() {
           </div>
           <div className="flex items-center gap-2 flex-wrap justify-end">
             <WarningBanner />
+            <OutOfRangeBanner />
             <button
               onClick={toggleSidebar}
               className="p-2 rounded-md hover:bg-accent hover:shadow-sm active:scale-95 transition-all cursor-pointer lg:hidden"
