@@ -1,14 +1,16 @@
 # WIP - Student Budget Calculator
-### THIS IS A WIP WITH HEAVY RELIANCE ON AI CODE GENERATION. EXPECT BUGS AND INCONSISTENCIES. USE WITH CAUTION.
+### THIS IS A WORK IN PROGRESS WITH HEAVY RELIANCE ON AI CODE GENERATION. EXPECT BUGS AND INCONSISTENCIES. USE WITH CAUTION.
 
 A visual budget planning tool designed for students to track income, expenses, and project their financial future. See your cash balance fluctuate over time with interactive charts and get warnings before you run out of money.
 
 ![Student Budget Calculator](https://img.shields.io/badge/React-19.2-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue) ![Vite](https://img.shields.io/badge/Vite-7.3-purple)
 
+![Example Image](example.png)
+
 ## Features
 
 ### 💰 Income Tracking
-- **Recurring Income**: Part-time jobs with configurable hours, hourly rate, and pay frequency (weekly/biweekly/monthly)
+- **Recurring Income**: Full or part time job with configurable hours, hourly rate, and pay frequency (weekly/biweekly/monthly)
 - **One-Time Income**: Tax refunds, stipends, gifts, and other non-recurring income
 
 ### 💸 Expense Management
@@ -22,11 +24,11 @@ A visual budget planning tool designed for students to track income, expenses, a
 ### 📊 Visual Projections
 - **Cash Balance Chart**: Interactive time-series chart showing daily balance over your projection period
 - **Income vs Expense Chart**: Monthly aggregated bar chart comparing total income and expenses
-- **Warning System**: Header banner alerts you when projections show negative balance, with specific date and deficit amount
+- **Warning System**: Header banner alerts you when projections show negative balance, invalid dates, or other issues
 
 ### 💾 Data Persistence
 - All data automatically saved to browser localStorage
-- No account needed, no server required
+- No account needed, no server required, run entirely in your browser
 - Reset to defaults with one click
 
 ## How It Works
@@ -50,13 +52,13 @@ The entire state is managed by **Zustand** with localStorage persistence, so you
 ## Tech Stack
 
 - **React 19** + **TypeScript** - Type-safe component architecture
-- **Vite 7** - Lightning-fast dev server and build tool
+- **Vite 7** - Dev server and build tool
 - **Tailwind CSS 4** - Utility-first styling with CSS variables for theming
 - **Recharts 3** - Composable charting library for React
 - **Zustand 5** - Lightweight state management with middleware
-- **dnd-kit** - Accessible drag-and-drop toolkit
-- **date-fns** - Modern date utility library
-- **Lucide React** - Beautiful icon set
+- **dnd-kit** - Drag-and-drop toolkit
+- **date-fns** - Date utility library
+- **Lucide React** - Icon set
 
 ## Setup Instructions
 
@@ -72,7 +74,7 @@ npm --version
 
 If not installed:
 - **Windows**: Download from [nodejs.org](https://nodejs.org/) and run the installer
-- **Linux**: Use your package manager:
+- **Linux**: Use your package manager
 
 ### Installation
 
@@ -118,35 +120,58 @@ If not installed:
 
 
 ## Project Structure
+<details>
+<summary>Project Structure File Diagram:</summary>
 
 ```
 src/
 ├── components/
-│   ├── charts/          # Recharts visualizations
-│   ├── dashboard/       # Summary cards and warning banner
-│   └── inputs/          # All form components (income, expenses, food, transport)
+│   ├── charts/
+│   │   ├── CashBalanceChart.tsx      # Time-series area chart with balance visualization
+│   │   └── IncomeExpenseChart.tsx    # Monthly bar chart comparing income vs expenses
+│   ├── dashboard/
+│   │   └── SummaryCards.tsx          # Summary statistics and warning banners
+│   └── inputs/
+│       ├── DebouncedNumberInput.tsx  # Debounced numeric input component
+│       ├── EditableLabel.tsx         # Inline editable text labels
+│       ├── FoodBudgetForm.tsx        # Food expense configuration
+│       ├── IncomeForm.tsx            # Recurring income (jobs) form
+│       ├── InitialBalanceForm.tsx    # Starting balance and projection length
+│       ├── OneTimeExpenseForm.tsx    # One-time expense entries
+│       ├── OneTimeIncomeForm.tsx     # One-time income entries
+│       ├── RecurringExpenseForm.tsx  # Monthly recurring expenses
+│       ├── SortableItem.tsx          # Drag-and-drop wrapper with dnd-kit
+│       └── TransportForm.tsx         # Transportation cost configuration
 ├── engine/
 │   ├── types.ts         # TypeScript interfaces for all data models
 │   └── projection.ts    # Day-by-day financial simulation logic
 ├── hooks/
 │   └── useProjection.ts # Memoized projection results from Zustand state
 ├── store/
-│   └── budgetStore.ts   # Zustand store with localStorage persistence
+│   ├── budgetStore.ts   # Zustand store with localStorage persistence
+│   └── templates.ts     # Pre-defined budget templates
 ├── lib/
-│   └── utils.ts         # Helper utilities
-├── App.tsx              # Main layout and routing
-└── index.css            # Tailwind CSS with theme variables
+│   └── utils.ts         # Helper utilities (ID generation, formatting)
+├── App.tsx              # Main layout with sidebar and chart area
+├── main.tsx             # React entry (renders <App />)
+├── index.css            # Tailwind CSS with theme variables and animations
+└── vite-env.d.ts        # Vite environment type declarations
+index.html               # Vite HTML entry
 ```
 
-## Usage Tips
+</details>
 
-1. **Start Simple**: Begin with just your initial balance and one income source
-2. **Add Expenses Gradually**: Start with big recurring costs (rent, utilities), then fill in details
-3. **Use Drag Handles**: Reorder items by grabbing the grip icon (⋮⋮) on the left of each card
-4. **Multiple Sections Open**: Click any section header to expand/collapse independently
-5. **Projection Length**: Adjust how many months ahead to calculate (3-24 months)
-6. **Watch the Warning Banner**: The header shows an alert if your balance will go negative
-7. **Reset Anytime**: Use the reset button in the top-right to restore default values
+## Usage Tips
+### DO NOT RELY ON FOR ACTUAL BUDGETING DECISIONS WITHOUT DOUBLE-CHECKING PROJECTIONS. THIS IS A WIP AND WILL CONTAIN BUGS.
+
+1. **Use the Templates**: Start with one of the templates to see how everything works (Button in top-right corner)
+2. **Start Simple**: Begin with just your initial balance and one income source
+3. **Add Expenses Gradually**: Start with big recurring costs (rent, utilities), then fill in details
+4. **Use Drag Handles**: Reorder items by grabbing the grip icon (⋮⋮) on the left of each card
+5. **Multiple Sections Open**: Click any section header to expand/collapse
+6. **Projection Length**: Adjust how many months ahead to calculate (3-24 months)
+7. **Watch the Warning Banner**: The header shows an alert if your balance will go negative or if dates are invalid
+8. **Reset Anytime**: Use the reset button in the top-right to restore default values
 
 
 ## License
