@@ -6,6 +6,7 @@ import type {
   OneTimeIncome,
   RecurringExpense,
   OneTimeExpense,
+  FoodBudget,
 } from '@/engine/types';
 import { generateId } from '@/lib/utils';
 import { format, addDays } from 'date-fns';
@@ -38,6 +39,8 @@ interface BudgetActions {
   updateOneTimeExpense: (id: string, data: Partial<OneTimeExpense>) => void;
   removeOneTimeExpense: (id: string) => void;
 
+  updateFoodBudget: (data: Partial<FoodBudget>) => void;
+
   resetAll: () => void;
 }
 
@@ -66,6 +69,14 @@ const defaultConfig: BudgetConfig = {
     },
   ],
   oneTimeExpenses: [],
+  foodBudget: {
+    enabled: true,
+    weekdayBreakfast: 3,
+    weekdayLunch: 8,
+    weekdayDinner: 12,
+    weekdaySnacks: 2,
+    weekendDailyTotal: 25,
+  },
 };
 
 export const useBudgetStore = create<BudgetStore>()(
@@ -172,6 +183,12 @@ export const useBudgetStore = create<BudgetStore>()(
       removeOneTimeExpense: (id) =>
         set((state) => ({
           oneTimeExpenses: state.oneTimeExpenses.filter((e) => e.id !== id),
+        })),
+
+      // ── Food Budget ──
+      updateFoodBudget: (data) =>
+        set((state) => ({
+          foodBudget: { ...state.foodBudget, ...data },
         })),
 
       resetAll: () => set(defaultConfig),

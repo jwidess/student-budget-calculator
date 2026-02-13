@@ -3,6 +3,7 @@ import {
   addMonths,
   differenceInCalendarDays,
   getDate,
+  isWeekend,
   parseISO,
   startOfDay,
   format,
@@ -63,10 +64,24 @@ export function runProjection(config: BudgetConfig): DailySnapshot[] {
     const date = addDays(today, i);
     const dateStr = format(date, 'yyyy-MM-dd');
     const dom = getDate(date);
+    const weekend = isWeekend(date);
 
     let incomeToday = 0;
     let expensesToday = 0;
     const events: string[] = [];
+
+    // ── Food budget ──
+    if (config.foodBudget.enabled) {
+      if (weekend) {
+        expensesToday += config.foodBudget.weekendDailyTotal;
+      } else {
+        expensesToday +=
+          config.foodBudget.weekdayBreakfast +
+          config.foodBudget.weekdayLunch +
+          config.foodBudget.weekdayDinner +
+          config.foodBudget.weekdaySnacks;
+      }
+    }
 
     // ── Recurring income ──
     for (const income of config.recurringIncomes) {

@@ -13,6 +13,7 @@ export function useProjection() {
       oneTimeIncomes: state.oneTimeIncomes,
       recurringExpenses: state.recurringExpenses,
       oneTimeExpenses: state.oneTimeExpenses,
+      foodBudget: state.foodBudget,
     }))
   );
 

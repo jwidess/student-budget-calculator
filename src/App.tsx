@@ -7,6 +7,7 @@ import { IncomeForm } from '@/components/inputs/IncomeForm';
 import { OneTimeIncomeForm } from '@/components/inputs/OneTimeIncomeForm';
 import { RecurringExpenseForm } from '@/components/inputs/RecurringExpenseForm';
 import { OneTimeExpenseForm } from '@/components/inputs/OneTimeExpenseForm';
+import { FoodBudgetForm } from '@/components/inputs/FoodBudgetForm';
 import { useBudgetStore } from '@/store/budgetStore';
 import {
   DollarSign,
@@ -17,9 +18,10 @@ import {
   RotateCcw,
   PanelLeftClose,
   PanelLeftOpen,
+  UtensilsCrossed,
 } from 'lucide-react';
 
-type Section = 'general' | 'income' | 'one-time-income' | 'expenses' | 'one-time-expenses';
+type Section = 'general' | 'income' | 'one-time-income' | 'expenses' | 'one-time-expenses' | 'food';
 
 interface InputSectionProps {
   id: Section;
@@ -158,6 +160,16 @@ export default function App() {
             onToggle={toggle}
           >
             <RecurringExpenseForm />
+          </InputSection>
+
+          <InputSection
+            id="food"
+            title="Food Budget"
+            icon={<UtensilsCrossed className="w-4 h-4 text-orange-500" />}
+            openSections={openSections}
+            onToggle={toggle}
+          >
+            <FoodBudgetForm />
           </InputSection>
 
           <InputSection

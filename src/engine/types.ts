@@ -35,6 +35,19 @@ export interface OneTimeExpense {
   date: string; // ISO date string
 }
 
+// ── Food Budget ──
+export interface FoodBudget {
+  /** Whether food budget tracking is enabled */
+  enabled: boolean;
+  /** Weekday meal costs */
+  weekdayBreakfast: number;
+  weekdayLunch: number;
+  weekdayDinner: number;
+  weekdaySnacks: number;
+  /** Flat weekend daily food cost */
+  weekendDailyTotal: number;
+}
+
 // ── Projection output ──
 export interface DailySnapshot {
   date: string; // ISO date string
@@ -51,5 +64,6 @@ export interface BudgetConfig {
   oneTimeIncomes: OneTimeIncome[];
   recurringExpenses: RecurringExpense[];
   oneTimeExpenses: OneTimeExpense[];
+  foodBudget: FoodBudget;
   projectionMonths: number; // how many months to project
 }
