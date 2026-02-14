@@ -1,6 +1,7 @@
 import { useBudgetStore } from '@/store/budgetStore';
 import { DebouncedNumberInput } from './DebouncedNumberInput';
 import { formatCurrency } from '@/lib/utils';
+import { Tooltip } from '@/components/Tooltip';
 
 export function FoodBudgetForm() {
   const { foodBudget, updateFoodBudget } = useBudgetStore();
@@ -46,8 +47,9 @@ export function FoodBudgetForm() {
             </p>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs text-muted-foreground mb-1">
+                <label className="block text-xs text-muted-foreground mb-1 flex items-center gap-1">
                   Breakfast ($)
+                  <Tooltip content="Average cost of breakfast on weekdays" />
                 </label>
                 <DebouncedNumberInput
                   value={foodBudget.weekdayBreakfast}
@@ -57,8 +59,9 @@ export function FoodBudgetForm() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-muted-foreground mb-1">
+                <label className="block text-xs text-muted-foreground mb-1 flex items-center gap-1">
                   Lunch ($)
+                  <Tooltip content="Average cost of lunch on weekdays" />
                 </label>
                 <DebouncedNumberInput
                   value={foodBudget.weekdayLunch}
@@ -68,8 +71,9 @@ export function FoodBudgetForm() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-muted-foreground mb-1">
+                <label className="block text-xs text-muted-foreground mb-1 flex items-center gap-1">
                   Dinner ($)
+                  <Tooltip content="Average cost of dinner on weekdays" />
                 </label>
                 <DebouncedNumberInput
                   value={foodBudget.weekdayDinner}
@@ -79,8 +83,9 @@ export function FoodBudgetForm() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-muted-foreground mb-1">
+                <label className="block text-xs text-muted-foreground mb-1 flex items-center gap-1">
                   Snacks ($)
+                  <Tooltip content="Average cost of snacks per weekday" />
                 </label>
                 <DebouncedNumberInput
                   value={foodBudget.weekdaySnacks}
@@ -101,8 +106,9 @@ export function FoodBudgetForm() {
               Weekend Costs (Sat–Sun)
             </p>
             <div>
-              <label className="block text-xs text-muted-foreground mb-1">
+              <label className="block text-xs text-muted-foreground mb-1 flex items-center gap-1">
                 Total per day ($)
+                <Tooltip content="Total food cost per day on weekends" />
               </label>
               <DebouncedNumberInput
                 value={foodBudget.weekendDailyTotal}

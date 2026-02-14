@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 
 interface ConfirmDialogProps {
@@ -10,8 +10,6 @@ interface ConfirmDialogProps {
   onConfirm: () => void;
   onCancel: () => void;
   variant?: 'default' | 'danger';
-  allowClose?: boolean;
-  hideCancelButton?: boolean;
 }
 
 export function ConfirmDialog({
@@ -23,75 +21,53 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
   variant = 'default',
-  allowClose = true,
-  hideCancelButton = false,
 }: ConfirmDialogProps) {
-  // Handle ESC key to close dialog
-  useEffect(() => {
-    if (!isOpen || !allowClose) return;
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onCancel();
-      }
-    };
-
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, [isOpen, allowClose, onCancel]);
-
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={allowClose ? onCancel : undefined}
-      />
-
-      {/* Dialog */}
-      <div className="relative bg-white rounded-lg shadow-2xl border border-border max-w-md w-full mx-4 animate-in fade-in zoom-in-95 duration-200">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-          <h2 className="text-lg font-semibold">{title}</h2>
-          {allowClose && (
-            <button
-              onClick={onCancel}
-              className="text-muted-foreground hover:text-foreground rounded-md p-1 hover:bg-accent transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          )}
+    <Dialog.Root open={isOpen} onOpenChange={(open) => { if (!open) onCancel(); }}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="dialog-overlay fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm" />
+        <div className="fixed inset-0 z-[201] grid place-items-center overflow-y-auto">
+          <Dialog.Content className="dialog-content max-w-md w-[calc(100%-2rem)] rounded-lg border border-border bg-white shadow-2xl">
+            <div className="relative px-6 py-4 border-b border-border">
+              <Dialog.Title className="text-lg font-semibold pr-8">
+                {title}
+              </Dialog.Title>
+              <Dialog.Close asChild>
+                <button
+                  className="absolute top-1/2 right-4 -translate-y-1/2 p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
+                  aria-label="Close"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </Dialog.Close>
+            </div>
+            <div className="px-6 py-4">
+              <Dialog.Description className="text-sm text-muted-foreground">
+                {message}
+              </Dialog.Description>
+            </div>
+            <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-border bg-gray-50 rounded-b-lg">
+              <Dialog.Close asChild>
+                <button
+                  className="px-4 py-2 text-sm font-medium rounded-md border border-input bg-white hover:bg-accent hover:shadow-sm active:scale-95 transition-all cursor-pointer"
+                >
+                  {cancelLabel}
+                </button>
+              </Dialog.Close>
+              <button
+                onClick={() => { onConfirm(); onCancel(); }}
+                className={`px-4 py-2 text-sm font-medium rounded-md hover:shadow-sm active:scale-95 transition-all cursor-pointer ${
+                  variant === 'danger'
+                    ? 'bg-red-600 text-white hover:bg-red-700'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
+              >
+                {confirmLabel}
+              </button>
+            </div>
+          </Dialog.Content>
         </div>
-
-        {/* Content */}
-        <div className="px-6 py-4">
-          <p className="text-sm text-muted-foreground">{message}</p>
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center justify-end gap-2 px-6 py-4 border-t border-border bg-gray-50">
-          {!hideCancelButton && (
-            <button
-              onClick={onCancel}
-              className="px-4 py-2 text-sm font-medium rounded-md border border-input bg-white hover:bg-accent hover:shadow-sm active:scale-95 transition-all cursor-pointer"
-            >
-              {cancelLabel}
-            </button>
-          )}
-          <button
-            onClick={onConfirm}
-            className={`px-4 py-2 text-sm font-medium rounded-md hover:shadow-sm active:scale-95 transition-all cursor-pointer ${
-              variant === 'danger'
-                ? 'bg-red-600 text-white hover:bg-red-700'
-                : 'bg-gray-400 text-white hover:bg-gray-500'
-            }`}
-          >
-            {confirmLabel}
-          </button>
-        </div>
-      </div>
-    </div>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }

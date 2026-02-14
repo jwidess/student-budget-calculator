@@ -3,6 +3,7 @@ import { useBudgetStore } from '@/store/budgetStore';
 import { DebouncedNumberInput } from './DebouncedNumberInput';
 import { formatCurrency } from '@/lib/utils';
 import { ChevronDown, Car, TrainFront } from 'lucide-react';
+import { Tooltip } from '@/components/Tooltip';
 
 export function TransportForm() {
   const { transportConfig, updateTransportConfig } = useBudgetStore();
@@ -84,8 +85,9 @@ export function TransportForm() {
             <div className={`px-3 pb-3 space-y-3 border-t ${!transportConfig.autoEnabled ? 'opacity-50 pointer-events-none' : ''}`}>
                 <div className="grid grid-cols-2 gap-3 mt-3">
                   <div>
-                    <label className="block text-xs text-muted-foreground mb-1">
+                    <label className="block text-xs text-muted-foreground mb-1 flex items-center gap-1">
                       Weekday miles/day
+                      <Tooltip content="Miles driven per weekday (Mon-Fri)" />
                     </label>
                     <DebouncedNumberInput
                       value={transportConfig.autoWeekdayMiles}
@@ -97,8 +99,9 @@ export function TransportForm() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-muted-foreground mb-1">
+                    <label className="block text-xs text-muted-foreground mb-1 flex items-center gap-1">
                       Weekend miles/day
+                      <Tooltip content="Miles driven per weekend day (Sat-Sun)" />
                     </label>
                     <DebouncedNumberInput
                       value={transportConfig.autoWeekendMiles}
@@ -110,8 +113,9 @@ export function TransportForm() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-muted-foreground mb-1">
+                    <label className="block text-xs text-muted-foreground mb-1 flex items-center gap-1">
                       Vehicle MPG
+                      <Tooltip content="Your vehicle's fuel efficiency (miles per gallon)" />
                     </label>
                     <DebouncedNumberInput
                       value={transportConfig.autoMpg}
@@ -123,8 +127,9 @@ export function TransportForm() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-muted-foreground mb-1">
+                    <label className="block text-xs text-muted-foreground mb-1 flex items-center gap-1">
                       Fuel cost ($/gal)
+                      <Tooltip content="Current price per gallon of fuel" />
                     </label>
                     <DebouncedNumberInput
                       value={transportConfig.autoFuelCostPerGallon}

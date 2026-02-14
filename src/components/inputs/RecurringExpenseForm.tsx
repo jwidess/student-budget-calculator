@@ -3,6 +3,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { EditableLabel } from './EditableLabel';
 import { DebouncedNumberInput } from './DebouncedNumberInput';
 import { SortableItem } from './SortableItem';
+import { Tooltip } from '@/components/Tooltip';
 import {
   DndContext,
   closestCenter,
@@ -94,8 +95,9 @@ export function RecurringExpenseForm() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-muted-foreground mb-1">
-                    Day of month (1-28)
+                  <label className="block text-xs text-muted-foreground mb-1 flex items-center gap-1">
+                    Day (1-28)
+                    <Tooltip content="Day of the month when this expense is due" />
                   </label>
                   <DebouncedNumberInput
                     value={expense.dayOfMonth}

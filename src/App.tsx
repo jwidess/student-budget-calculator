@@ -13,6 +13,7 @@ import { RotateDevicePrompt } from '@/components/RotateDevicePrompt';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { useBudgetStore } from '@/store/budgetStore';
 import { budgetTemplates } from '@/store/templates';
+import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import {
   DollarSign,
   TrendingUp,
@@ -192,7 +193,7 @@ export default function App() {
   }, [templateMenuOpen]);
 
   return (
-    <>
+    <TooltipPrimitive.Provider delayDuration={300} skipDelayDuration={100}>
       <RotateDevicePrompt />
       <div className="min-h-screen flex flex-col">
       {/* Header */}
@@ -414,6 +415,6 @@ export default function App() {
         variant={confirmDialog.variant}
       />
     </div>
-    </>
+    </TooltipPrimitive.Provider>
   );
 }
