@@ -34,6 +34,11 @@ function niceIncrement(range: number): number {
   return 250;
 }
 
+// Chart layout constants (keep in sync with ResponsiveContainer / AreaChart props)
+const CHART_HEIGHT = 400;
+const MARGIN = { top: 10, right: 10, left: 10, bottom: 0 };
+const XAXIS_HEIGHT = 30; // explicit so gradient bounds stay in sync
+
 interface ChartDataPoint {
   date: string;
   balance: number;
@@ -161,20 +166,25 @@ export function CashBalanceChart() {
     return stickyDomain.current;
   }, [sampled]);
 
-  // Where zero falls as a fraction from the top of the path's bounding box.
-  // Must use actual data extents (including 0 from baseValue), NOT the padded
-  // y-axis domain, because the SVG gradient maps to the element's bounding box.
+  // Where zero falls as a fraction of the chart area, computed from the Y-axis
+  // domain. We use gradientUnits="userSpaceOnUse" so the gradient maps to the
+  // chart's pixel coordinate space directly, avoiding objectBoundingBox issues
+  // where the fill and stroke paths have different bounding boxes (the stroke
+  // doesn't extend to baseValue=0) and monotone interpolation can overshoot.
   const zeroFraction = useMemo(() => {
-    if (sampled.length === 0) return 1;
-    const balances = sampled.map((d) => d.balance);
-    const dataMax = Math.max(...balances, 0); // 0 included because baseValue={0}
-    const dataMin = Math.min(...balances, 0);
-    if (dataMax <= 0) return 0;   // entirely negative
-    if (dataMin >= 0) return 1;   // entirely positive
-    return dataMax / (dataMax - dataMin);
-  }, [sampled]);
+    const [domMin, domMax] = yDomain;
+    if (domMax <= 0) return 0;   // entirely negative
+    if (domMin >= 0) return 1;   // entirely positive
+    return domMax / (domMax - domMin);
+  }, [yDomain]);
 
   const pct = `${(zeroFraction * 100).toFixed(4)}%`;
+
+  // Pixel boundaries of the chart's plotting area (for userSpaceOnUse gradients).
+  // Must subtract XAXIS_HEIGHT because the axis is drawn inside the chart area,
+  // shrinking the actual plot region.
+  const gradientY1 = MARGIN.top;
+  const gradientY2 = CHART_HEIGHT - MARGIN.bottom - XAXIS_HEIGHT;
 
   // Track raw data length changes to trigger a fade transition when projection months changes.
   // We use data.length (total projection days) instead of sampled.length, because the
@@ -204,21 +214,21 @@ export function CashBalanceChart() {
         className="transition-opacity duration-150 ease-in-out"
         style={{ opacity: fading ? 0 : 1 }}
       >
-      <ResponsiveContainer key={chartKey} width="100%" height={400}>
+      <ResponsiveContainer key={chartKey} width="100%" height={CHART_HEIGHT}>
         <AreaChart
           data={sampled}
-          margin={{ top: 10, right: 10, left: 10, bottom: 0 }}
+          margin={MARGIN}
         >
           <defs>
-            {/* Fill: green above zero, red below zero */}
-            <linearGradient id="splitFill" x1="0" y1="0" x2="0" y2="1">
+            {/* Fill: green above zero, red below zero (userSpaceOnUse = pixel coords) */}
+            <linearGradient id="splitFill" x1="0" y1={gradientY1} x2="0" y2={gradientY2} gradientUnits="userSpaceOnUse">
               <stop offset="0%" stopColor="#22c55e" stopOpacity={0.25} />
               <stop offset={pct} stopColor="#22c55e" stopOpacity={0.05} />
               <stop offset={pct} stopColor="#ef4444" stopOpacity={0.05} />
               <stop offset="100%" stopColor="#ef4444" stopOpacity={0.25} />
             </linearGradient>
             {/* Stroke: green above zero, red below zero */}
-            <linearGradient id="splitStroke" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="splitStroke" x1="0" y1={gradientY1} x2="0" y2={gradientY2} gradientUnits="userSpaceOnUse">
               <stop offset={pct} stopColor="#22c55e" />
               <stop offset={pct} stopColor="#ef4444" />
             </linearGradient>
@@ -235,6 +245,7 @@ export function CashBalanceChart() {
             }}
             interval={Math.floor(data.length / 8)}
             fontSize={12}
+            height={XAXIS_HEIGHT}
           />
           <YAxis
             domain={yDomain}
