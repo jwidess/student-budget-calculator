@@ -1,7 +1,7 @@
 # WIP - Student Budget Visualizer
 ### THIS IS A WORK IN PROGRESS WITH HEAVY RELIANCE ON AI CODE GENERATION. EXPECT BUGS AND INCONSISTENCIES. USE WITH CAUTION.
 
-A visual budget planning tool designed for students to track income, expenses, and project their financial future. See your cash balance fluctuate over time with interactive charts and get warnings before you run out of money.
+A visual budget planning tool designed for students, or anyone, to track income, expenses, and project their financial future. See your cash balance fluctuate over time with interactive charts and get warnings before you run out of money.
 
 ![Student Budget Visualizer](https://img.shields.io/badge/React-19.2-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue) ![Vite](https://img.shields.io/badge/Vite-7.3-purple)
 
@@ -16,34 +16,36 @@ A visual budget planning tool designed for students to track income, expenses, a
 - **One-Time Income**: Tax refunds, stipends, gifts, and other non-recurring income
 
 ### 💸 Expense Management
-- **Monthly Expenses**: Rent, utilities, subscriptions with automatic monthly recurrence
+- **Monthly Expenses**: Rent, utilities, subscriptions, loans, etc. with automatic monthly recurrence
 - **One-Time Expenses**: Tuition payments, textbooks, electronics
 - **Food Budget**: Separate weekday meal costs (breakfast/lunch/dinner/snacks) and weekend daily totals
 - **Commuting Costs**: 
   - Auto transit with miles driven, MPG, and fuel cost calculations
-  - Public transit with weekly pass costs
+  - Public transit with weekly pass cost
 
 ### 📊 Visual Projections
-- **Cash Balance Chart**: Interactive time-series chart showing daily balance over your projection period
-- **Income vs Expense Chart**: Monthly aggregated bar chart comparing total income and expenses
+- **Cash Balance Over Time Chart**: Interactive time-series chart showing daily balance over your projection period
+- **Monthly Income vs Expenses Chart**: Monthly aggregated bar chart comparing total income and expenses
 - **Warning System**: Header banner alerts you when projections show negative balance, invalid dates, or other issues
 
 ### 💾 Data Persistence
 - All data automatically saved to browser localStorage
-- No account needed, no server required, run entirely in your browser
+- No account needed, no server required, runs entirely in your browser
 - Reset to defaults with one click
 
 ## Usage Tips
 ### DO NOT RELY ON FOR ACTUAL BUDGETING DECISIONS WITHOUT DOUBLE-CHECKING PROJECTIONS. THIS IS A WIP AND WILL CONTAIN BUGS.
 
-1. **Use the Templates**: Start with one of the templates to see how everything works (Button in top-right corner)
+1. **Templates**: Start with one of the templates to see how everything works ("Load Template" Button)
 2. **Start Simple**: Begin with just your initial balance and one income source
 3. **Add Expenses Gradually**: Start with big recurring costs (rent, utilities), then fill in details
 4. **Use Drag Handles**: Reorder items by grabbing the grip icon (⋮⋮) on the left of each card
 5. **Multiple Sections Open**: Click any section header to expand/collapse
 6. **Projection Length**: Adjust how many months ahead to calculate (3-24 months)
 7. **Watch the Warning Banner**: The header shows an alert if your balance will go negative or if dates are invalid
-8. **Reset Anytime**: Use the reset button in the top-right to restore default values
+8. **Help Tooltips**: Hover over help icons (?) next to input fields for explanations
+9. **Help Button**: Click the blue help button (bottom-right corner) for a full guide
+10. **Reset Anytime**: Use the reset button in the top-right to restore default values
 
 ## How It Works
 
@@ -67,9 +69,10 @@ The entire state is managed by **Zustand** with localStorage persistence, so you
 
 - **React 19** + **TypeScript** - Type-safe component architecture
 - **Vite 7** - Dev server and build tool
-- **Tailwind CSS 4** - Utility-first styling with CSS variables for theming
-- **Recharts 3** - Composable charting library for React
-- **Zustand 5** - Lightweight state management with middleware
+- **Tailwind CSS 4** - Styling with CSS variables for theming
+- **Recharts 3** - Charting library for React
+- **Zustand 5** - Lightweight state management
+- **Radix UI** - Component primitives (Dialog, Tooltip)
 - **dnd-kit** - Drag-and-drop toolkit
 - **date-fns** - Date utility library
 - **Lucide React** - Icon set
@@ -145,17 +148,21 @@ src/
 │   │   └── IncomeExpenseChart.tsx    # Monthly bar chart comparing income vs expenses
 │   ├── dashboard/
 │   │   └── SummaryCards.tsx          # Summary statistics and warning banners
-│   └── inputs/
-│       ├── DebouncedNumberInput.tsx  # Debounced numeric input component
-│       ├── EditableLabel.tsx         # Inline editable text labels
-│       ├── FoodBudgetForm.tsx        # Food expense configuration
-│       ├── IncomeForm.tsx            # Recurring income (jobs) form
-│       ├── InitialBalanceForm.tsx    # Starting balance and projection length
-│       ├── OneTimeExpenseForm.tsx    # One-time expense entries
-│       ├── OneTimeIncomeForm.tsx     # One-time income entries
-│       ├── RecurringExpenseForm.tsx  # Monthly recurring expenses
-│       ├── SortableItem.tsx          # Drag-and-drop wrapper with dnd-kit
-│       └── TransportForm.tsx         # Transportation cost configuration
+│   ├── inputs/
+│   │   ├── DebouncedNumberInput.tsx  # Debounced numeric input component
+│   │   ├── EditableLabel.tsx         # Inline editable text labels
+│   │   ├── FoodBudgetForm.tsx        # Food expense configuration
+│   │   ├── IncomeForm.tsx            # Recurring income (jobs) form
+│   │   ├── InitialBalanceForm.tsx    # Starting balance and projection length
+│   │   ├── OneTimeExpenseForm.tsx    # One-time expense entries
+│   │   ├── OneTimeIncomeForm.tsx     # One-time income entries
+│   │   ├── RecurringExpenseForm.tsx  # Monthly recurring expenses
+│   │   ├── SortableItem.tsx          # Drag-and-drop wrapper with dnd-kit
+│   │   └── TransportForm.tsx         # Transportation cost configuration
+│   ├── ConfirmDialog.tsx             # Confirmation dialog for destructive actions
+│   ├── HelpModal.tsx                 # Full help guide with feature explanations
+│   ├── RotateDevicePrompt.tsx        # Mobile landscape mode prompt
+│   └── Tooltip.tsx                   # Help tooltip component
 ├── engine/
 │   ├── types.ts         # TypeScript interfaces for all data models
 │   └── projection.ts    # Day-by-day financial simulation logic
@@ -179,9 +186,11 @@ index.html               # Vite HTML entry
 - [ ] Add mobile support/variable width handling for smaller screens. Currently does not work on narrow viewports.
   - [x] Added a "rotate device prompt" for narrow widths to force landscape mode on mobile. Works well for now.
 - [x] Add end date for jobs (Recurring Income) for things like short term gigs or summer jobs.
-- [ ] Add help tooltips explaining each input field and how it affects projections.
-- [ ] Add help modal for new users with a quick walkthrough of features.
+- [x] Add help tooltips explaining each input field and how it affects projections.
+- [x] Add help modal for new users with a quick walkthrough of features.
 - [ ] Add export projection data as CSV
+- [ ] Add save slots so users can have multiple budgets (e.g. "Current Semester", "Next Semester", "Summer")
+- [ ] Monthly expense end dates
 
 ## License
 
