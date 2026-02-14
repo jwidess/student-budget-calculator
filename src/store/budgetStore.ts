@@ -50,6 +50,7 @@ interface BudgetActions {
 
   applyTemplate: (config: BudgetConfig) => void;
   resetAll: () => void;
+  hasUserEdits: boolean;
 }
 
 type BudgetStore = BudgetConfig & BudgetActions;
@@ -101,13 +102,15 @@ export const useBudgetStore = create<BudgetStore>()(
   persist(
     (set) => ({
       ...defaultConfig,
+      hasUserEdits: false,
 
-      setInitialBalance: (amount) => set({ initialBalance: amount }),
-      setProjectionMonths: (months) => set({ projectionMonths: months }),
+      setInitialBalance: (amount) => set({ initialBalance: amount, hasUserEdits: true }),
+      setProjectionMonths: (months) => set({ projectionMonths: months, hasUserEdits: true }),
 
       // ── Recurring Income ──
       addRecurringIncome: () =>
         set((state) => ({
+          hasUserEdits: true,
           recurringIncomes: [
             ...state.recurringIncomes,
             {
@@ -122,18 +125,21 @@ export const useBudgetStore = create<BudgetStore>()(
         })),
       updateRecurringIncome: (id, data) =>
         set((state) => ({
+          hasUserEdits: true,
           recurringIncomes: state.recurringIncomes.map((i) =>
             i.id === id ? { ...i, ...data } : i
           ),
         })),
       removeRecurringIncome: (id) =>
         set((state) => ({
+          hasUserEdits: true,
           recurringIncomes: state.recurringIncomes.filter((i) => i.id !== id),
         })),
 
       // ── One-Time Income ──
       addOneTimeIncome: () =>
         set((state) => ({
+          hasUserEdits: true,
           oneTimeIncomes: [
             ...state.oneTimeIncomes,
             {
@@ -146,18 +152,21 @@ export const useBudgetStore = create<BudgetStore>()(
         })),
       updateOneTimeIncome: (id, data) =>
         set((state) => ({
+          hasUserEdits: true,
           oneTimeIncomes: state.oneTimeIncomes.map((i) =>
             i.id === id ? { ...i, ...data } : i
           ),
         })),
       removeOneTimeIncome: (id) =>
         set((state) => ({
+          hasUserEdits: true,
           oneTimeIncomes: state.oneTimeIncomes.filter((i) => i.id !== id),
         })),
 
       // ── Recurring Expense ──
       addRecurringExpense: () =>
         set((state) => ({
+          hasUserEdits: true,
           recurringExpenses: [
             ...state.recurringExpenses,
             {
@@ -170,18 +179,21 @@ export const useBudgetStore = create<BudgetStore>()(
         })),
       updateRecurringExpense: (id, data) =>
         set((state) => ({
+          hasUserEdits: true,
           recurringExpenses: state.recurringExpenses.map((e) =>
             e.id === id ? { ...e, ...data } : e
           ),
         })),
       removeRecurringExpense: (id) =>
         set((state) => ({
+          hasUserEdits: true,
           recurringExpenses: state.recurringExpenses.filter((e) => e.id !== id),
         })),
 
       // ── One-Time Expense ──
       addOneTimeExpense: () =>
         set((state) => ({
+          hasUserEdits: true,
           oneTimeExpenses: [
             ...state.oneTimeExpenses,
             {
@@ -194,12 +206,14 @@ export const useBudgetStore = create<BudgetStore>()(
         })),
       updateOneTimeExpense: (id, data) =>
         set((state) => ({
+          hasUserEdits: true,
           oneTimeExpenses: state.oneTimeExpenses.map((e) =>
             e.id === id ? { ...e, ...data } : e
           ),
         })),
       removeOneTimeExpense: (id) =>
         set((state) => ({
+          hasUserEdits: true,
           oneTimeExpenses: state.oneTimeExpenses.filter((e) => e.id !== id),
         })),
 
@@ -209,44 +223,46 @@ export const useBudgetStore = create<BudgetStore>()(
           const arr = [...state.recurringIncomes];
           const [item] = arr.splice(from, 1) as [typeof arr[0]];
           arr.splice(to, 0, item);
-          return { recurringIncomes: arr };
+          return { hasUserEdits: true, recurringIncomes: arr };
         }),
       reorderOneTimeIncomes: (from, to) =>
         set((state) => {
           const arr = [...state.oneTimeIncomes];
           const [item] = arr.splice(from, 1) as [typeof arr[0]];
           arr.splice(to, 0, item);
-          return { oneTimeIncomes: arr };
+          return { hasUserEdits: true, oneTimeIncomes: arr };
         }),
       reorderRecurringExpenses: (from, to) =>
         set((state) => {
           const arr = [...state.recurringExpenses];
           const [item] = arr.splice(from, 1) as [typeof arr[0]];
           arr.splice(to, 0, item);
-          return { recurringExpenses: arr };
+          return { hasUserEdits: true, recurringExpenses: arr };
         }),
       reorderOneTimeExpenses: (from, to) =>
         set((state) => {
           const arr = [...state.oneTimeExpenses];
           const [item] = arr.splice(from, 1) as [typeof arr[0]];
           arr.splice(to, 0, item);
-          return { oneTimeExpenses: arr };
+          return { hasUserEdits: true, oneTimeExpenses: arr };
         }),
 
       // ── Food Budget ──
       updateFoodBudget: (data) =>
         set((state) => ({
+          hasUserEdits: true,
           foodBudget: { ...state.foodBudget, ...data },
         })),
 
       // ── Transport ──
       updateTransportConfig: (data) =>
         set((state) => ({
+          hasUserEdits: true,
           transportConfig: { ...state.transportConfig, ...data },
         })),
-applyTemplate: (config) => set(config),
+      applyTemplate: (config) => set({ ...config, hasUserEdits: false }),
       
-      resetAll: () => set(defaultConfig),
+      resetAll: () => set({ ...defaultConfig, hasUserEdits: false }),
     }),
     {
       name: 'student-budget-data',

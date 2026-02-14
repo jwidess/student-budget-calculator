@@ -92,6 +92,7 @@ export default function App() {
   const [templateMenuOpen, setTemplateMenuOpen] = useState(false);
   const resetAll = useBudgetStore((s) => s.resetAll);
   const applyTemplate = useBudgetStore((s) => s.applyTemplate);
+  const hasUserEdits = useBudgetStore((s) => s.hasUserEdits);
   const mainRef = useRef<HTMLElement>(null);
 
   // Get state for determining if sections are inactive
@@ -215,7 +216,7 @@ export default function App() {
             <OutOfRangeBanner />
             <button
               onClick={() => {
-                if (window.confirm('Are you sure you want to reset all data to defaults? This cannot be undone.')) {
+                if (!hasUserEdits || window.confirm('Are you sure you want to reset all data to defaults? This cannot be undone.')) {
                   resetAll();
                 }
               }}
@@ -263,7 +264,7 @@ export default function App() {
                       <button
                         key={template.name}
                         onClick={() => {
-                          if (window.confirm(`Load "${template.name}" template? This will replace all current values.`)) {
+                          if (!hasUserEdits || window.confirm(`Load "${template.name}" template? This will replace all current values.`)) {
                             applyTemplate(template.config);
                             setTemplateMenuOpen(false);
                           }
