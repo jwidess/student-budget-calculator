@@ -36,6 +36,12 @@ function isPayday(date: Date, income: RecurringIncome): boolean {
 
   if (daysDiff < 0) return false;
 
+  // Check if the date is after the end date (if specified)
+  if (income.endDate) {
+    const endDate = startOfDay(parseISO(income.endDate));
+    if (current > endDate) return false;
+  }
+
   switch (income.frequency) {
     case 'weekly':
       return daysDiff % 7 === 0;

@@ -10,6 +10,8 @@ export interface RecurringIncome {
   frequency: PayFrequency;
   /** Anchor date for biweekly pay – the date of a known paycheck */
   startDate: string; // ISO date string
+  /** Optional end date for recurring income (e.g., for summer jobs or internships) */
+  endDate?: string; // ISO date string
 }
 
 export interface OneTimeIncome {

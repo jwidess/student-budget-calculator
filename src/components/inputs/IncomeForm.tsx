@@ -1,7 +1,7 @@
 import { useBudgetStore } from '@/store/budgetStore';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, X } from 'lucide-react';
 import type { PayFrequency } from '@/engine/types';
-import { format, addMonths } from 'date-fns';
+import { format, addMonths, parseISO, differenceInCalendarDays, addDays, getDate } from 'date-fns';
 import { EditableLabel } from './EditableLabel';
 import { DebouncedNumberInput } from './DebouncedNumberInput';
 import { SortableItem } from './SortableItem';
@@ -35,6 +35,71 @@ export function IncomeForm() {
 
   const isDateOutOfRange = (dateStr: string) => {
     return dateStr < minDate || dateStr > maxDate;
+  };
+
+  // Snap end date to nearest valid pay date based on frequency
+  const snapToValidPayDate = (startDateStr: string, endDateStr: string, frequency: PayFrequency): string => {
+    const startDate = parseISO(startDateStr);
+    const endDate = parseISO(endDateStr);
+    const daysDiff = differenceInCalendarDays(endDate, startDate);
+
+    if (daysDiff < 0) return startDateStr;
+
+    let snappedDate: Date;
+    switch (frequency) {
+      case 'weekly': {
+        const weeks = Math.round(daysDiff / 7);
+        snappedDate = addDays(startDate, weeks * 7);
+        break;
+      }
+      case 'biweekly': {
+        const biweeks = Math.round(daysDiff / 14);
+        snappedDate = addDays(startDate, biweeks * 14);
+        break;
+      }
+      case 'monthly': {
+        // For monthly, ensure it's the same day of month as start date
+        const startDay = getDate(startDate);
+        let testDate = new Date(endDate);
+        testDate.setDate(startDay);
+        // If the month doesn't have that day, use the last day of the month
+        if (getDate(testDate) !== startDay) {
+          testDate.setDate(0); // Sets to last day of previous month
+        }
+        snappedDate = testDate;
+        break;
+      }
+      default:
+        snappedDate = endDate;
+    }
+
+    return format(snappedDate, 'yyyy-MM-dd');
+  };
+
+  // Calculate number of paychecks between start and end dates
+  const countPaychecks = (startDateStr: string, endDateStr: string | undefined, frequency: PayFrequency): number => {
+    if (!endDateStr) return -1; // Indefinite
+    
+    const startDate = parseISO(startDateStr);
+    const endDate = parseISO(endDateStr);
+    const daysDiff = differenceInCalendarDays(endDate, startDate);
+
+    if (daysDiff < 0) return 0;
+
+    switch (frequency) {
+      case 'weekly':
+        return Math.floor(daysDiff / 7) + 1;
+      case 'biweekly':
+        return Math.floor(daysDiff / 14) + 1;
+      case 'monthly': {
+        // Count months between dates
+        const months = (endDate.getFullYear() - startDate.getFullYear()) * 12 + 
+                       (endDate.getMonth() - startDate.getMonth());
+        return months + 1;
+      }
+      default:
+        return 0;
+    }
   };
 
   const sensors = useSensors(
@@ -73,7 +138,7 @@ export function IncomeForm() {
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={recurringIncomes.map((i) => i.id)} strategy={verticalListSortingStrategy}>
           {recurringIncomes.map((income) => {
-            const isOutOfRange = isDateOutOfRange(income.startDate);
+            const isOutOfRange = isDateOutOfRange(income.startDate) || (income.endDate && isDateOutOfRange(income.endDate));
             return (
             <SortableItem key={income.id} id={income.id} className={isOutOfRange ? 'border-2 border-red-500 bg-orange-100' : ''}>
               <div className="flex items-center gap-2">
@@ -132,7 +197,7 @@ export function IncomeForm() {
                 </div>
                 <div>
                   <label className="block text-xs text-muted-foreground mb-1">
-                    First paycheck date
+                    First pay date
                   </label>
                   <input
                     type="date"
@@ -144,6 +209,47 @@ export function IncomeForm() {
                     max={maxDate}
                     className="w-full rounded-md border border-input bg-background px-1 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                   />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3">
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">
+                    Last pay date (optional)
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="date"
+                      value={income.endDate || ''}
+                      onChange={(e) => {
+                        const rawValue = e.target.value;
+                        if (!rawValue) {
+                          updateRecurringIncome(income.id, { endDate: undefined });
+                        } else {
+                          const snapped = snapToValidPayDate(income.startDate, rawValue, income.frequency);
+                          updateRecurringIncome(income.id, { endDate: snapped });
+                        }
+                      }}
+                      min={income.startDate}
+                      max={maxDate}
+                      className="w-full rounded-md border border-input bg-background px-1 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring pr-8"
+                    />
+                    {income.endDate && (
+                      <button
+                        type="button"
+                        onClick={() => updateRecurringIncome(income.id, { endDate: undefined })}
+                        className="absolute right-1 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+                        title="Clear end date"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  {income.endDate && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {countPaychecks(income.startDate, income.endDate, income.frequency)} paychecks included
+                    </p>
+                  )}
                 </div>
               </div>
 
