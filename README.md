@@ -1,13 +1,13 @@
-# WIP - Student Budget Calculator
+# WIP - Student Budget Visualizer
 ### THIS IS A WORK IN PROGRESS WITH HEAVY RELIANCE ON AI CODE GENERATION. EXPECT BUGS AND INCONSISTENCIES. USE WITH CAUTION.
 
 A visual budget planning tool designed for students to track income, expenses, and project their financial future. See your cash balance fluctuate over time with interactive charts and get warnings before you run out of money.
 
-![Student Budget Calculator](https://img.shields.io/badge/React-19.2-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue) ![Vite](https://img.shields.io/badge/Vite-7.3-purple)
+![Student Budget Visualizer](https://img.shields.io/badge/React-19.2-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue) ![Vite](https://img.shields.io/badge/Vite-7.3-purple)
 
 ![Example Image](example.png)
 
-## View the Live App Here: [jwidess.github.io/student-budget-calculator/](https://jwidess.github.io/student-budget-calculator/)
+## View the Live App Here: [jwidess.github.io/student-budget-visualizer/](https://jwidess.github.io/student-budget-visualizer/)
 
 ## Features
 
@@ -96,8 +96,8 @@ If not installed:
 
 1. **Clone the repository**:
    ```powershell
-   git clone https://github.com/jwidess/student-budget-calculator.git
-   cd student-budget-calculator
+   git clone https://github.com/jwidess/student-budget-visualizer.git
+   cd student-budget-visualizer
    ```
 
 2. **Install dependencies**:
@@ -116,8 +116,8 @@ If not installed:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/jwidess/student-budget-calculator.git
-   cd student-budget-calculator
+   git clone https://github.com/jwidess/student-budget-visualizer.git
+   cd student-budget-visualizer
    ```
 
 2. **Install dependencies**:

@@ -58,7 +58,7 @@ export function HelpModal() {
                   {/* Project Link */}
                   <div className="px-0">
                     <a
-                      href="https://github.com/jwidess/student-budget-calculator"
+                      href="https://github.com/jwidess/student-budget-visualizer"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-blue-600 hover:underline"

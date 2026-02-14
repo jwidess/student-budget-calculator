@@ -1,5 +1,5 @@
 {
-  "name": "student-budget-calculator",
+  "name": "student-budget-visualizer",
   "version": "1.0.0",
   "description": "A platform for calculating your monthly expenses, minimum hours to work, student loan amounts, etc.",
   "private": true,
@@ -12,15 +12,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jwidess/student-budget-calculator.git"
+    "url": "git+https://github.com/jwidess/student-budget-visualizer.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jwidess/student-budget-calculator/issues"
+    "url": "https://github.com/jwidess/student-budget-visualizer/issues"
   },
-  "homepage": "https://github.com/jwidess/student-budget-calculator#readme",
+  "homepage": "https://github.com/jwidess/student-budget-visualizer#readme",
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",

@@ -215,7 +215,7 @@ export default function App() {
             <DollarSign className="w-6 h-6 text-green-600" />
             <div>
               <h1 className="text-lg font-bold leading-tight">
-                Student Budget Calculator
+                Student Budget Visualizer
               </h1>
               <p className="text-xs text-muted-foreground">
                 Project your finances, visualize your future
