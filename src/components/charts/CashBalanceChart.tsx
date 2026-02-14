@@ -11,7 +11,7 @@ import {
 } from 'recharts';
 import { useProjection } from '@/hooks/useProjection';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import type { DailySnapshot } from '@/engine/types';
+import type { DailySnapshot, DailyEvent } from '@/engine/types';
 
 /** Round down to nearest increment */
 function floorTo(value: number, increment: number): number {
@@ -37,7 +37,7 @@ function niceIncrement(range: number): number {
 interface ChartDataPoint {
   date: string;
   balance: number;
-  events: string[];
+  events: DailyEvent[];
 }
 
 function prepareChartData(snapshots: DailySnapshot[]): ChartDataPoint[] {
@@ -71,8 +71,13 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
       {data.events.length > 0 && (
         <div className="mt-1 border-t pt-1">
           {data.events.map((e, i) => (
-            <p key={i} className="text-xs text-muted-foreground">
-              • {e}
+            <p key={i} className={`text-xs font-medium ${
+              e.type === 'income' ? 'text-green-600' : 'text-red-600'
+            }`}>
+              • {e.label}{' '}
+              <span className="font-semibold">
+                {e.type === 'income' ? '+' : '−'}{formatCurrency(e.amount)}
+              </span>
             </p>
           ))}
         </div>

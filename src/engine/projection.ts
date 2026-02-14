@@ -8,7 +8,7 @@ import {
   startOfDay,
   format,
 } from 'date-fns';
-import type { BudgetConfig, DailySnapshot, RecurringIncome } from './types';
+import type { BudgetConfig, DailySnapshot, DailyEvent, RecurringIncome } from './types';
 
 /**
  * Calculate gross pay for a single paycheck based on income config.
@@ -74,7 +74,7 @@ export function runProjection(config: BudgetConfig): DailySnapshot[] {
 
     let incomeToday = 0;
     let expensesToday = 0;
-    const events: string[] = [];
+    const events: DailyEvent[] = [];
 
     // ── Food budget ──
     if (config.foodBudget.enabled) {
@@ -109,7 +109,7 @@ export function runProjection(config: BudgetConfig): DailySnapshot[] {
       if (isPayday(date, income)) {
         const amount = paycheckAmount(income);
         incomeToday += amount;
-        events.push(`${income.label} paycheck`);
+        events.push({ label: `${income.label} paycheck`, amount, type: 'income' });
       }
     }
 
@@ -117,7 +117,7 @@ export function runProjection(config: BudgetConfig): DailySnapshot[] {
     for (const oti of config.oneTimeIncomes) {
       if (oti.date === dateStr) {
         incomeToday += oti.amount;
-        events.push(oti.label);
+        events.push({ label: oti.label, amount: oti.amount, type: 'income' });
       }
     }
 
@@ -125,7 +125,7 @@ export function runProjection(config: BudgetConfig): DailySnapshot[] {
     for (const expense of config.recurringExpenses) {
       if (dom === expense.dayOfMonth) {
         expensesToday += expense.amount;
-        events.push(expense.label);
+        events.push({ label: expense.label, amount: expense.amount, type: 'expense' });
       }
     }
 
@@ -133,7 +133,7 @@ export function runProjection(config: BudgetConfig): DailySnapshot[] {
     for (const ote of config.oneTimeExpenses) {
       if (ote.date === dateStr) {
         expensesToday += ote.amount;
-        events.push(ote.label);
+        events.push({ label: ote.label, amount: ote.amount, type: 'expense' });
       }
     }
 

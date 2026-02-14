@@ -66,12 +66,18 @@ export interface TransportConfig {
 }
 
 // ── Projection output ──
+export interface DailyEvent {
+  label: string;
+  amount: number;
+  type: 'income' | 'expense';
+}
+
 export interface DailySnapshot {
   date: string; // ISO date string
   balance: number;
   incomeToday: number;
   expensesToday: number;
-  events: string[]; // labels of what happened today
+  events: DailyEvent[]; // structured events that happened today
 }
 
 // ── Top-level budget configuration ──
