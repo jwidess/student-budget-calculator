@@ -38,16 +38,17 @@ A visual budget planning tool designed for students, or anyone, to track income,
 
 ## Usage Tips
 
-1. **Templates**: Start with one of the templates to see how everything works ("Load Template" Button)
-2. **Start Simple**: Begin with just your initial balance and one income source
-3. **Add Expenses Gradually**: Start with big recurring costs (rent, utilities), then fill in details
-4. **Use Drag Handles**: Reorder items by grabbing the grip icon (⋮⋮) on the left of each card
-5. **Multiple Sections Open**: Click any section header to expand/collapse
-6. **Projection Length**: Adjust how many months ahead to calculate (3-24 months)
-7. **Watch the Warning Banner**: The header shows an alert if your balance will go negative or if dates are invalid
-8. **Help Tooltips**: Hover over help icons (?) next to input fields for explanations
-9. **Help Button**: Click the blue help button (bottom-right corner) for a full guide
-10. **Reset Anytime**: Use the reset button in the top-right to restore default values
+1. **Help Button**: Click the blue help button (bottom-right corner) for a full guide
+2. **Templates**: Start with one of the templates to see how everything works ("Load Template" Button)
+3. **Start Simple**: Begin with just your initial balance and one income source
+4. **Add Expenses Gradually**: Start with big recurring costs (rent, utilities), then fill in details
+5. **Use Drag Handles**: Reorder items by grabbing the grip icon (⋮⋮) on the left of each card
+6. **Enable/Disable Items**: Click the eye icon to toggle whether an income or expense is included in projections without deleting it
+7. **Multiple Sections Open**: Click any section header to expand/collapse
+8. **Projection Length**: Adjust how many months ahead to calculate (3-24 months)
+9. **Watch the Warning Banner**: The header shows an alert if your balance will go negative or if dates are invalid
+10. **Help Tooltips**: Hover over help icons (?) next to input fields for explanations
+11. **Reset**: Use the reset button in the top-right to restore default values
 
 ## How It Works
 
@@ -187,13 +188,13 @@ index.html               # Vite HTML entry
 ## To-do
 - [ ] Add mobile support/variable width handling for smaller screens. Currently does not work on narrow viewports.
   - [x] Added a "rotate device prompt" for narrow widths to force landscape mode on mobile. Works well for now.
-- [x] Add end date for jobs (Recurring Income) for things like short term gigs or summer jobs.
-- [x] Add help tooltips explaining each input field and how it affects projections.
-- [x] Add help modal for new users with a quick walkthrough of features.
+- [x] ~~Add end date for jobs (Recurring Income) for things like short term gigs or summer jobs.~~
+- [x] ~~Add help tooltips explaining each input field and how it affects projections.~~
+- [x] ~~Add help modal for new users with a quick walkthrough of features.~~
 - [ ] Add export projection data as CSV
 - [ ] Add save slots so users can have multiple budgets (e.g. "Current Semester", "Next Semester", "Summer")
 - [ ] Monthly expense end dates
-- [ ] Enable/Disable One-Time and Monthly Expenses/Income to easily see impact without deleting
+- [x] ~~Enable/Disable One-Time and Monthly Expenses/Income to easily see impact without deleting~~
 - [ ] Add tax factors to income projections to simulate tax withholding and refunds more accurately. Could just be a simple percentage input for each income source that reduces the projected amount, and then a separate "tax refund" one-time income entry that you can schedule for tax season.
 - [ ] Credit card payment simulation. Currently, everything is simulated as if you were paying with a debit card, which directly affects your cash balance. This system would have you input your current credit card balance, payment dates, etc. This way, you could see the more realistic impact of credit card payments when they happen
 - [ ] Gas fillup simulation. Instead of just calculating a daily cost based on miles driven, MPG, and fuel cost, this would simulate actual fillup events. Would probably be adequate to add an input for vehicle tank size which would then calc roughly when fillups happen. This would create more realistic spikes in your cash balance when you have to actually pay for a fillup, instead of just a smooth daily cost.
