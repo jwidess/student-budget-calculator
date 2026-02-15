@@ -74,7 +74,7 @@ export function OneTimeIncomeForm() {
           {oneTimeIncomes.map((income) => {
             const isOutOfRange = isDateOutOfRange(income.date);
             return (
-            <SortableItem key={income.id} id={income.id} className={isOutOfRange ? 'border-2 border-red-500 bg-orange-100' : ''}>
+            <SortableItem key={income.id} id={income.id} enabled={income.enabled !== false} onToggleEnabled={() => updateOneTimeIncome(income.id, { enabled: income.enabled === false })} className={isOutOfRange ? 'border-2 border-red-500 bg-orange-100' : ''}>
               <div className="flex items-center gap-2">
                 <EditableLabel
                   value={income.label}

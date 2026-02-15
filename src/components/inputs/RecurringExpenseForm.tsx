@@ -64,7 +64,7 @@ export function RecurringExpenseForm() {
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={recurringExpenses.map((e) => e.id)} strategy={verticalListSortingStrategy}>
           {recurringExpenses.map((expense) => (
-            <SortableItem key={expense.id} id={expense.id}>
+            <SortableItem key={expense.id} id={expense.id} enabled={expense.enabled !== false} onToggleEnabled={() => updateRecurringExpense(expense.id, { enabled: expense.enabled === false })}>
               <div className="flex items-center gap-2">
                 <EditableLabel
                   value={expense.label}

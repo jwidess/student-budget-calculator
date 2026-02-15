@@ -12,6 +12,8 @@ export interface RecurringIncome {
   startDate: string; // ISO date string
   /** Optional end date for recurring income (e.g., for summer jobs or internships) */
   endDate?: string; // ISO date string
+  /** Whether this income is included in the projection (default: true) */
+  enabled?: boolean;
 }
 
 export interface OneTimeIncome {
@@ -19,6 +21,8 @@ export interface OneTimeIncome {
   label: string;
   amount: number;
   date: string; // ISO date string
+  /** Whether this income is included in the projection (default: true) */
+  enabled?: boolean;
 }
 
 // ── Expenses ──
@@ -28,6 +32,8 @@ export interface RecurringExpense {
   amount: number;
   /** Day of the month this expense is due (1-28) */
   dayOfMonth: number;
+  /** Whether this expense is included in the projection (default: true) */
+  enabled?: boolean;
 }
 
 export interface OneTimeExpense {
@@ -35,6 +41,8 @@ export interface OneTimeExpense {
   label: string;
   amount: number;
   date: string; // ISO date string
+  /** Whether this expense is included in the projection (default: true) */
+  enabled?: boolean;
 }
 
 // ── Food Budget ──

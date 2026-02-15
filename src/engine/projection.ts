@@ -106,6 +106,7 @@ export function runProjection(config: BudgetConfig): DailySnapshot[] {
 
     // ── Recurring income ──
     for (const income of config.recurringIncomes) {
+      if (income.enabled === false) continue;
       if (isPayday(date, income)) {
         const amount = paycheckAmount(income);
         incomeToday += amount;
@@ -115,6 +116,7 @@ export function runProjection(config: BudgetConfig): DailySnapshot[] {
 
     // ── One-time income ──
     for (const oti of config.oneTimeIncomes) {
+      if (oti.enabled === false) continue;
       if (oti.date === dateStr) {
         incomeToday += oti.amount;
         events.push({ label: oti.label, amount: oti.amount, type: 'income' });
@@ -123,6 +125,7 @@ export function runProjection(config: BudgetConfig): DailySnapshot[] {
 
     // ── Recurring expenses ──
     for (const expense of config.recurringExpenses) {
+      if (expense.enabled === false) continue;
       if (dom === expense.dayOfMonth) {
         expensesToday += expense.amount;
         events.push({ label: expense.label, amount: expense.amount, type: 'expense' });
@@ -131,6 +134,7 @@ export function runProjection(config: BudgetConfig): DailySnapshot[] {
 
     // ── One-time expenses ──
     for (const ote of config.oneTimeExpenses) {
+      if (ote.enabled === false) continue;
       if (ote.date === dateStr) {
         expensesToday += ote.amount;
         events.push({ label: ote.label, amount: ote.amount, type: 'expense' });

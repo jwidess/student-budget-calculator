@@ -74,7 +74,7 @@ export function OneTimeExpenseForm() {
           {oneTimeExpenses.map((expense) => {
             const isOutOfRange = isDateOutOfRange(expense.date);
             return (
-            <SortableItem key={expense.id} id={expense.id} className={isOutOfRange ? 'border-2 border-red-500 bg-orange-100' : ''}>
+            <SortableItem key={expense.id} id={expense.id} enabled={expense.enabled !== false} onToggleEnabled={() => updateOneTimeExpense(expense.id, { enabled: expense.enabled === false })} className={isOutOfRange ? 'border-2 border-red-500 bg-orange-100' : ''}>
               <div className="flex items-center gap-2">
                 <EditableLabel
                   value={expense.label}
