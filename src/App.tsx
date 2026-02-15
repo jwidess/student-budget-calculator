@@ -119,7 +119,9 @@ export default function App() {
   const { hasOutOfRangeRecurring, hasOutOfRangeIncomes, hasOutOfRangeExpenses } = useOutOfRangeDetection();
 
   // Calculate summary amounts for section headers
-  const monthlyExpensesTotal = recurringExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+  const monthlyExpensesTotal = recurringExpenses
+    .filter((exp) => exp.enabled !== false)
+    .reduce((sum, exp) => sum + exp.amount, 0);
 
   const weekdayFoodDaily =
     foodBudget.weekdayBreakfast +
