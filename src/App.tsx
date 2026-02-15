@@ -42,9 +42,10 @@ interface InputSectionProps {
   hasWarning?: boolean;
   isInactive?: boolean;
   summaryAmount?: number;
+  disabledCount?: number;
 }
 
-function InputSection({ id, title, icon, openSections, onToggle, children, hasWarning, isInactive, summaryAmount }: InputSectionProps) {
+function InputSection({ id, title, icon, openSections, onToggle, children, hasWarning, isInactive, summaryAmount, disabledCount }: InputSectionProps) {
   const isOpen = openSections.has(id);
   return (
     <div className="border-b border-border last:border-b-0">
@@ -57,7 +58,25 @@ function InputSection({ id, title, icon, openSections, onToggle, children, hasWa
         }`}
       >
         {icon}
-        <span className="flex-1 text-left">{title}</span>
+        <span className="flex-1 text-left flex items-center gap-1.5">
+          {title}
+          {disabledCount !== undefined && disabledCount > 0 && (
+            <TooltipPrimitive.Root delayDuration={200}>
+              <TooltipPrimitive.Trigger asChild>
+                <span className="inline-flex items-center justify-center w-2 h-2 rounded-full bg-amber-500" />
+              </TooltipPrimitive.Trigger>
+              <TooltipPrimitive.Portal>
+                <TooltipPrimitive.Content
+                  className="tooltip-content z-50 overflow-hidden rounded-md bg-gray-900 px-3 py-1.5 text-xs text-white shadow-md"
+                  sideOffset={5}
+                >
+                  {disabledCount} disabled {disabledCount === 1 ? 'item' : 'items'}
+                  <TooltipPrimitive.Arrow className="fill-gray-900" />
+                </TooltipPrimitive.Content>
+              </TooltipPrimitive.Portal>
+            </TooltipPrimitive.Root>
+          )}
+        </span>
         {summaryAmount !== undefined && (
           <span className="text-xs italic text-slate-600">
             ${summaryAmount.toFixed(2)}/mo
@@ -122,6 +141,12 @@ export default function App() {
   const monthlyExpensesTotal = recurringExpenses
     .filter((exp) => exp.enabled !== false)
     .reduce((sum, exp) => sum + exp.amount, 0);
+
+  // Count disabled items for each section
+  const disabledRecurringIncomes = recurringIncomes.filter((i) => i.enabled === false).length;
+  const disabledOneTimeIncomes = oneTimeIncomes.filter((i) => i.enabled === false).length;
+  const disabledOneTimeExpenses = oneTimeExpenses.filter((e) => e.enabled === false).length;
+  const disabledRecurringExpenses = recurringExpenses.filter((e) => e.enabled === false).length;
 
   const weekdayFoodDaily =
     foodBudget.weekdayBreakfast +
@@ -335,6 +360,7 @@ export default function App() {
             onToggle={toggle}
             hasWarning={hasOutOfRangeRecurring}
             isInactive={recurringIncomes.length === 0}
+            disabledCount={disabledRecurringIncomes}
           >
             <IncomeForm />
           </InputSection>
@@ -347,6 +373,7 @@ export default function App() {
             onToggle={toggle}
             hasWarning={hasOutOfRangeIncomes}
             isInactive={oneTimeIncomes.length === 0}
+            disabledCount={disabledOneTimeIncomes}
           >
             <OneTimeIncomeForm />
           </InputSection>
@@ -359,6 +386,7 @@ export default function App() {
             onToggle={toggle}
             hasWarning={hasOutOfRangeExpenses}
             isInactive={oneTimeExpenses.length === 0}
+            disabledCount={disabledOneTimeExpenses}
           >
             <OneTimeExpenseForm />
           </InputSection>
@@ -371,6 +399,7 @@ export default function App() {
             onToggle={toggle}
             isInactive={recurringExpenses.length === 0}
             summaryAmount={monthlyExpensesTotal}
+            disabledCount={disabledRecurringExpenses}
           >
             <RecurringExpenseForm />
           </InputSection>
