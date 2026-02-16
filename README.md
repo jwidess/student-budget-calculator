@@ -3,9 +3,10 @@
 
 A visual budget planning tool designed for students, or anyone, to track income, expenses, and project their financial future. See your cash balance fluctuate over time with interactive charts and get warnings before you run out of money.
 
-## Live Site: [jwidess.github.io/student-budget-visualizer/](https://jwidess.github.io/student-budget-visualizer/)
+> [!TIP]
+> **View the live site here: [jwidess.github.io/student-budget-visualizer](https://jwidess.github.io/student-budget-visualizer)**
 
-![Student Budget Visualizer](https://img.shields.io/badge/React-19.2-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue) ![Vite](https://img.shields.io/badge/Vite-7.3-purple) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.2-green) ![Recharts](https://img.shields.io/badge/Recharts-3.0-red) ![Zustand](https://img.shields.io/badge/Zustand-5.0-yellow)
+![Student Budget Visualizer](https://img.shields.io/badge/React-19.2-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue) ![Recharts](https://img.shields.io/badge/Recharts-3.0-red) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.2-green) ![Zustand](https://img.shields.io/badge/Zustand-5.0-yellow) ![Vite](https://img.shields.io/badge/Vite-7.3-purple)
 
 ![Example Image](example.png)
 
@@ -189,12 +190,13 @@ index.html               # Vite HTML entry
 
 ## To-do
 - [ ] Add mobile support/variable width handling for smaller screens. Currently does not work on narrow viewports.
-  - [x] Added a "rotate device prompt" for narrow widths to force landscape mode on mobile. Works well for now.
+  - [x] Added a "rotate device prompt" for narrow widths to force landscape mode on mobile. Good enough for now.
 - [x] ~~Add end date for jobs (Recurring Income) for things like short term gigs or summer jobs.~~
 - [x] ~~Add help tooltips explaining each input field and how it affects projections.~~
 - [x] ~~Add help modal for new users with a quick walkthrough of features.~~
 - [ ] Add export projection data as CSV
 - [ ] Add save slots so users can have multiple budgets (e.g. "Current Semester", "Next Semester", "Summer")
+  - [x] Added import/export of input data in JSON format. This allows users to save multiple budgets by exporting their data and re-importing. Good enough for now.
 - [ ] Monthly expense end dates
 - [x] ~~Enable/Disable One-Time and Monthly Expenses/Income to easily see impact without deleting~~
 - [ ] Add tax factors to income projections to simulate tax withholding and refunds more accurately. Could just be a simple percentage input for each income source that reduces the projected amount, and then a separate "tax refund" one-time income entry that you can schedule for tax season.
